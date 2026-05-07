@@ -420,8 +420,8 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
     <div class="tb-tabs">
       <button class="tb-tab" onclick="sv('annual',this)">연간 보기</button>
       <button class="tb-tab" onclick="sv('project',this)">프로젝트</button>
-      <button class="tb-tab on" onclick="sv('team',this)">팀 현황</button>
-      <button class="tb-tab" onclick="sv('gantt',this)">스케줄러</button>
+      <button class="tb-tab on" onclick="sv('team',this)">주간 업무</button>
+      <button class="tb-tab" onclick="sv('gantt',this)">팀 현황</button>
     </div>
     <div class="tb-right">
       <div class="yr-nav">
@@ -841,7 +841,7 @@ function rTeam(){
 
 /* ── GANTT SCHEDULER ── */
 let ganttRange=30;
-let ganttOffset=0; // day offset
+let ganttOffset=0;
 
 function rGantt(){
   const el=document.getElementById('vg');
@@ -849,47 +849,43 @@ function rGantt(){
   const base=new Date(td+'T00:00:00');
   base.setDate(base.getDate()+ganttOffset);
   const startDate=new Date(base);
-  const COL_W=36;
+  const COL_W=ganttRange<=30?38:ganttRange<=90?20:12;
 
-  // Build days array
   const days=[];
   for(let i=0;i<ganttRange;i++){
     const d=new Date(startDate);d.setDate(startDate.getDate()+i);
     days.push(d.toISOString().slice(0,10));
   }
   const startStr=days[0],endStr=days[days.length-1];
-  const rangeLabel=`${startStr.slice(5).replace('-','/')} — ${endStr.slice(5).replace('-','/')}`;
+  const fmt=ds=>`${ds.slice(5,7)}/${ds.slice(8)}`;
+  const rangeLabel=`${startStr.slice(0,4)}년 ${fmt(startStr)} — ${fmt(endStr)}`;
   const dayKR=['일','월','화','수','목','금','토'];
 
-  // Header days
   const headerCols=days.map(ds=>{
     const d=new Date(ds+'T00:00:00');
     const dow=d.getDay();
     const isToday=ds===td;
     const isWE=dow===0||dow===6;
+    const showLabel=ganttRange<=30||(ganttRange<=90&&d.getDate()%3===1)||(d.getDate()===1||d.getDate()===15);
     return`<div class="gantt-day-col${isToday?' today':''}" style="width:${COL_W}px;min-width:${COL_W}px">
-      <div class="gantt-day-name" style="${isWE?'color:#EF4444':''}"> ${dayKR[dow]}</div>
-      <div class="gantt-day-num">${String(d.getDate()).padStart(2,'0')}</div>
+      ${showLabel?`<div class="gantt-day-name" style="${isWE?'color:#EF4444':''}">${dayKR[dow]}</div>`:'<div class="gantt-day-name"></div>'}
+      <div class="gantt-day-num" style="${isWE?'color:#EF4444':isToday?'color:#2563EB':''}">${ganttRange<=90?d.getDate():d.getDate()===1?`${d.getMonth()+1}월`:''}</div>
     </div>`;
   }).join('');
 
-  // Rows per member
+  // All projects overlapping range (no member filter)
+  const allProjs=S.projects.filter(p=>p.start<=endStr&&p.end>=startStr);
+
   const memberRows=S.members.map((m,mi)=>{
     const c=ac(mi);
-    // get projects this member is assigned to that overlap range
-    const memberProjs=S.projects.filter(p=>{
-      const assigned=p.memberIds&&p.memberIds.includes(m.id);
-      return assigned&&p.start<=endStr&&p.end>=startStr;
-    });
+    const memberProjs=allProjs.filter(p=>p.members&&p.members.includes(m.id));
 
-    // background cells
     const cells=days.map(ds=>{
       const d=new Date(ds+'T00:00:00');const dow=d.getDay();
       const isToday=ds===td;const isWE=dow===0||dow===6;
-      return`<div class="gantt-cell${isToday?' today':''}${isWE?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px"></div>`;
+      return`<div class="gantt-cell${isToday?' today':''}${isWE?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px" ondblclick="openGanttAdd('${m.id}','${ds}')"></div>`;
     }).join('');
 
-    // project bars
     const bars=memberProjs.map((p,pi)=>{
       const ps=p.start<startStr?startStr:p.start;
       const pe=p.end>endStr?endStr:p.end;
@@ -897,27 +893,64 @@ function rGantt(){
       const endIdx=days.indexOf(pe);
       if(startIdx<0||endIdx<0)return'';
       const left=startIdx*COL_W+2;
-      const width=(endIdx-startIdx+1)*COL_W-4;
+      const width=Math.max((endIdx-startIdx+1)*COL_W-4,COL_W-4);
       const top=4+pi*34;
-      return`<div class="gantt-bar" style="left:${left}px;width:${width}px;background:${p.color}22;color:${p.color};border:1.5px solid ${p.color};top:${top}px" title="${p.name}">${p.name}</div>`;
+      const dday=Math.ceil((new Date(p.end)-new Date(td))/(1000*60*60*24));
+      const ddayStr=dday<0?`D+${Math.abs(dday)}`:dday===0?'D-Day':`D-${dday}`;
+      return`<div class="gantt-bar" style="left:${left}px;width:${width}px;background:${p.color}22;color:${p.color};border:1.5px solid ${p.color};top:${top}px" 
+        title="${p.name} (${p.start}~${p.end})" onclick="openEditProjModal('${p.id}')">
+        ${width>60?`<span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${p.name}</span>`:''}
+        ${width>90?`<span style="font-size:10px;opacity:.7;flex-shrink:0">${ddayStr}</span>`:''}
+      </div>`;
     });
 
     const rowH=Math.max(52,memberProjs.length*34+12);
+    const photoSrc=S.memberPhotos&&S.memberPhotos[m.id];
 
     return{
-      memberHTML:`<div class="gantt-member-row" style="height:${rowH}px">
-        <div class="gantt-member-avatar" style="background:${c.bg};color:${c.t}">${S.memberPhotos&&S.memberPhotos[m.id]?`<img src="${S.memberPhotos[m.id]}">`:`${m.name.slice(0,2)}`}</div>
+      memberHTML:`<div class="gantt-member-row" style="height:${rowH}px" onclick="showProfile('${m.id}')">
+        <div class="gantt-member-avatar" style="background:${c.bg};color:${c.t}">
+          ${photoSrc?`<img src="${photoSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${m.name.slice(0,2)}`}
+        </div>
         <div class="gantt-member-name">${m.name}</div>
+        <div style="font-size:10px;color:var(--text-2);margin-left:auto">${memberProjs.length}개</div>
       </div>`,
-      rowHTML:`<div class="gantt-row" style="height:${rowH}px">
+      rowHTML:`<div class="gantt-row" style="height:${rowH}px;position:relative">
         ${cells}
         ${bars.join('')}
       </div>`
     };
   });
 
-  const membersHTML=memberRows.map(r=>r.memberHTML).join('');
-  const rowsHTML=memberRows.map(r=>r.rowHTML).join('');
+  // Unassigned projects row
+  const unassignedProjs=allProjs.filter(p=>!p.members||p.members.length===0);
+  let unassignedMember='', unassignedRow='';
+  if(unassignedProjs.length>0){
+    const ubars=unassignedProjs.map((p,pi)=>{
+      const ps=p.start<startStr?startStr:p.start;
+      const pe=p.end>endStr?endStr:p.end;
+      const si=days.indexOf(ps),ei=days.indexOf(pe);
+      if(si<0||ei<0)return'';
+      const left=si*COL_W+2,width=Math.max((ei-si+1)*COL_W-4,COL_W-4),top=4+pi*34;
+      return`<div class="gantt-bar" style="left:${left}px;width:${width}px;background:${p.color}22;color:${p.color};border:1.5px solid ${p.color};top:${top}px;opacity:.6" 
+        onclick="openEditProjModal('${p.id}')" title="${p.name}">
+        ${width>60?`<span>${p.name}</span>`:''}
+      </div>`;
+    });
+    const rowH=Math.max(52,unassignedProjs.length*34+12);
+    const ucells=days.map(ds=>{
+      const d=new Date(ds+'T00:00:00');const dow=d.getDay();
+      return`<div class="gantt-cell${ds===td?' today':''}${dow===0||dow===6?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px"></div>`;
+    }).join('');
+    unassignedMember=`<div class="gantt-member-row" style="height:${rowH}px;opacity:.7">
+      <div class="gantt-member-avatar" style="background:#ccc;color:#666;font-size:10px">미배정</div>
+      <div class="gantt-member-name" style="color:var(--text-2)">미배정 프로젝트</div>
+    </div>`;
+    unassignedRow=`<div class="gantt-row" style="height:${rowH}px;position:relative">${ucells}${ubars.join('')}</div>`;
+  }
+
+  const membersHTML=memberRows.map(r=>r.memberHTML).join('')+unassignedMember;
+  const rowsHTML=memberRows.map(r=>r.rowHTML).join('')+unassignedRow;
 
   el.innerHTML=`
     <div class="gantt-toolbar">
@@ -927,22 +960,103 @@ function rGantt(){
         <button class="gantt-nav-btn" onclick="ganttOffset+=ganttRange;rGantt()">›</button>
         <span style="font-size:13px;font-weight:600;color:var(--text);margin-left:4px">${rangeLabel}</span>
       </div>
-      <div style="display:flex;gap:6px">
+      <div style="display:flex;gap:6px;align-items:center">
         <button class="gantt-range-btn${ganttRange===30?' on':''}" onclick="ganttRange=30;rGantt()">1개월</button>
         <button class="gantt-range-btn${ganttRange===90?' on':''}" onclick="ganttRange=90;rGantt()">3개월</button>
         <button class="gantt-range-btn${ganttRange===150?' on':''}" onclick="ganttRange=150;rGantt()">5개월</button>
+        <button class="gantt-range-btn" style="background:var(--accent);color:#fff;border-color:var(--accent)" onclick="openAddProjModal()">+ 프로젝트 추가</button>
       </div>
     </div>
     <div class="gantt-wrap">
       <div class="gantt-members">
-        <div class="gantt-member-header">팀원</div>
+        <div class="gantt-member-header">팀원 (${S.members.length}명)</div>
         ${membersHTML}
       </div>
-      <div class="gantt-chart">
+      <div class="gantt-chart" id="gantt-chart-scroll">
         <div class="gantt-header">${headerCols}</div>
         <div class="gantt-rows">${rowsHTML}</div>
       </div>
     </div>`;
+
+  // Scroll to today
+  setTimeout(()=>{
+    const sc=document.getElementById('gantt-chart-scroll');
+    if(sc&&ganttOffset===0){
+      const todayIdx=days.indexOf(td);
+      if(todayIdx>0)sc.scrollLeft=Math.max(0,(todayIdx-3)*COL_W);
+    }
+  },50);
+}
+
+function openGanttAdd(mid,ds){
+  // open project add modal pre-filling this member and date
+  openAddProjModal(mid,ds);
+}
+
+function openAddProjModal(presetMid,presetDate){
+  // reuse existing addProj modal logic
+  const catRows=S.categories.map(cat=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px"><input type="checkbox" name="pc" value="${cat.id}"><div style="width:9px;height:9px;border-radius:50%;background:${cat.hx};flex-shrink:0"></div> ${cat.l}</label>`).join('');
+  const memberRows=S.members.map(m=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px"><input type="checkbox" name="pm" value="${m.id}"${presetMid===m.id?' checked':''}> ${m.name}</label>`).join('');
+  const swatches=PROJ_COLORS.map((c,i)=>`<div class="cp-swatch${i===0?' on':''}" style="background:${c}" data-color="${c}" onclick="pickColor(this)"></div>`).join('')+`<input type="color" class="cp-custom" title="직접 선택" value="#378ADD" oninput="pickColorCustom(this)">`;
+  const startVal=presetDate||today();
+  const endVal=(()=>{const d=new Date(startVal+'T00:00:00');d.setDate(d.getDate()+30);return d.toISOString().slice(0,10)})();
+  document.getElementById('mc').innerHTML=`<div class="modal-ov" onclick="if(event.target===this)closeM()"><div class="modal"><div class="modal-title">프로젝트 추가</div>
+    <div class="modal-field"><label>프로젝트명</label><input id="pn" placeholder="프로젝트 이름"></div>
+    <div class="modal-field"><label>색상</label><div class="color-picker" id="cp">${swatches}</div></div>
+    <div class="modal-field"><label>시작일</label><input id="ps" type="date" value="${startVal}"></div>
+    <div class="modal-field"><label>종료일</label><input id="pe" type="date" value="${endVal}"></div>
+    <div class="modal-field"><label>팀원</label><div class="member-check-grid">${memberRows}</div></div>
+    <div class="modal-field"><label>카테고리</label><div class="member-check-grid">${catRows}</div></div>
+    <div class="modal-btns"><button class="mbtn" onclick="closeM()">취소</button><button class="mbtn p" onclick="addProjFromGantt()">추가</button></div></div></div>`;
+}
+
+function addProjFromGantt(){
+  const name=(document.getElementById('pn').value||'').trim();if(!name)return;
+  const _sw=document.querySelector('.cp-swatch.on');const color=_sw?(_sw.dataset.color||rgbToHex(_sw.style.background)):PROJ_COLORS[0];
+  const start=document.getElementById('ps').value,end=document.getElementById('pe').value;
+  const members=[...document.querySelectorAll('input[name="pm"]:checked')].map(el=>el.value);
+  const categories=[...document.querySelectorAll('input[name="pc"]:checked')].map(el=>el.value);
+  if(!members.length){alert('팀원을 1명 이상 선택해주세요');return}
+  S.projects.push({id:'p'+Date.now(),name,color,start,end,members,categories});
+  lsSave();closeM();rGantt();rProject();rAnnual();
+}
+
+function openEditProjModal(pid){
+  const p=S.projects.find(x=>x.id===pid);if(!p)return;
+  const catRows=S.categories.map(cat=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px"><input type="checkbox" name="pc" value="${cat.id}"${p.categories&&p.categories.includes(cat.id)?' checked':''}><div style="width:9px;height:9px;border-radius:50%;background:${cat.hx};flex-shrink:0"></div> ${cat.l}</label>`).join('');
+  const memberRows=S.members.map(m=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px"><input type="checkbox" name="pm" value="${m.id}"${p.members&&p.members.includes(m.id)?' checked':''}> ${m.name}</label>`).join('');
+  const swatches=PROJ_COLORS.map((c,i)=>`<div class="cp-swatch${c===p.color?' on':''}" style="background:${c}" data-color="${c}" onclick="pickColor(this)"></div>`).join('')+`<input type="color" class="cp-custom" title="직접 선택" value="${p.color}" oninput="pickColorCustom(this)">`;
+  document.getElementById('mc').innerHTML=`<div class="modal-ov" onclick="if(event.target===this)closeM()"><div class="modal"><div class="modal-title">프로젝트 수정</div>
+    <div class="modal-field"><label>프로젝트명</label><input id="pn" value="${p.name}"></div>
+    <div class="modal-field"><label>색상</label><div class="color-picker" id="cp">${swatches}</div></div>
+    <div class="modal-field"><label>시작일</label><input id="ps" type="date" value="${p.start}"></div>
+    <div class="modal-field"><label>종료일</label><input id="pe" type="date" value="${p.end}"></div>
+    <div class="modal-field"><label>팀원</label><div class="member-check-grid">${memberRows}</div></div>
+    <div class="modal-field"><label>카테고리</label><div class="member-check-grid">${catRows}</div></div>
+    <div class="modal-btns">
+      <button class="mbtn danger" onclick="deleteProjFromGantt('${pid}')">삭제</button>
+      <button class="mbtn" onclick="closeM()">취소</button>
+      <button class="mbtn p" onclick="saveEditProjFromGantt('${pid}')">저장</button>
+    </div></div></div>`;
+}
+
+function saveEditProjFromGantt(pid){
+  const p=S.projects.find(x=>x.id===pid);if(!p)return;
+  const name=(document.getElementById('pn').value||'').trim();if(!name)return;
+  const _sw=document.querySelector('.cp-swatch.on');
+  p.color=_sw?(_sw.dataset.color||rgbToHex(_sw.style.background)):p.color;
+  p.name=name;
+  p.start=document.getElementById('ps').value;
+  p.end=document.getElementById('pe').value;
+  p.members=[...document.querySelectorAll('input[name="pm"]:checked')].map(el=>el.value);
+  p.categories=[...document.querySelectorAll('input[name="pc"]:checked')].map(el=>el.value);
+  lsSave();closeM();rGantt();rProject();rAnnual();
+}
+
+function deleteProjFromGantt(pid){
+  if(!confirm('프로젝트를 삭제할까요?'))return;
+  S.projects=S.projects.filter(x=>x.id!==pid);
+  lsSave();closeM();rGantt();rProject();rAnnual();
 }
 
 /* ── member filter pills ── */
@@ -1574,7 +1688,7 @@ function addProj(){
   const categories=[...document.querySelectorAll('input[name="pc"]:checked')].map(el=>el.value);
   if(!members.length){alert('팀원을 1명 이상 선택해주세요');return}
   S.projects.push({id:'p'+Date.now(),name,color,start,end,members,categories});
-  lsSave();closeM();rProject();rAnnual();rTeam();
+  lsSave();closeM();rProject();rAnnual();rTeam();if(S.view==='gantt')rGantt();
 }
 function saveEditProj(id){
   const p=S.projects.find(x=>x.id===id);if(!p)return;
@@ -1586,11 +1700,11 @@ function saveEditProj(id){
   const categories=[...document.querySelectorAll('input[name="pc"]:checked')].map(el=>el.value);
   if(!members.length){alert('팀원을 1명 이상 선택해주세요');return}
   p.name=name;p.color=color;p.start=start;p.end=end;p.members=members;p.categories=categories;
-  lsSave();closeM();rProject();rAnnual();rTeam();
+  lsSave();closeM();rProject();rAnnual();rTeam();if(S.view==='gantt')rGantt();
 }
 function delProj(id){
   S.projects=S.projects.filter(p=>p.id!==id);
-  lsSave();closeM();rProject();rAnnual();rTeam();
+  lsSave();closeM();rProject();rAnnual();rTeam();if(S.view==='gantt')rGantt();
 }
 function confirmDelProj(id){
   const p=S.projects.find(x=>x.id===id);if(!p)return;
