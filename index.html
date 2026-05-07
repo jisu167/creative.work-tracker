@@ -764,7 +764,7 @@ function rTeam(){
 
   const fmt=ds=>ds.slice(5).replace('-','/');
   const wLabel=`${weekDates[0].slice(0,4)}년  ${fmt(weekDates[0])} — ${fmt(weekDates[6])}`;
-  const dayKR=['월','화','수','목','금','토','일'];
+  const dayKR=['일','월','화','수','목','금','토'];
 
   const totalWorks=Object.values(S.works).reduce((s,a)=>s+a.length,0);
   const todayWorks=S.members.reduce((s,m)=>s+gw(td,m.id).length,0);
@@ -805,7 +805,7 @@ function rTeam(){
     return`<tr>
       <td class="day-label-td${isToday?' is-today':''}">
         <div class="day-num">${ds.slice(8)}</div>
-        <div class="day-kr">${dayKR[di]}</div>
+        <div class="day-kr">${dayKR[new Date(ds+'T00:00:00').getDay()]}</div>
       </td>
       ${cells}
     </tr>`;
