@@ -452,55 +452,49 @@ const DAYS=['일','월','화','수','목','금','토'];
 const MONTHS=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 const DAYNAMES=['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
 
-/* ── SHARED PERSISTENT STORAGE ── */
+/* ── SUPABASE PERSISTENT STORAGE ── */
+const SUPABASE_URL='https://vgekouqzawikfrotqzwm.supabase.co';
+const SUPABASE_KEY='sb_publishable_lBq4Nmu2iCZiN3C2YV3bYQ_crp4wSHx';
+
+async function sbGet(key){
+  try{
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/kv_store?key=eq.${key}&select=value`,{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    const d=await r.json();
+    return d&&d.length?JSON.parse(d[0].value):null;
+  }catch(e){return null}
+}
+async function sbSet(key,value){
+  try{
+    await fetch(`${SUPABASE_URL}/rest/v1/kv_store`,{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify({key,value:JSON.stringify(value)})
+    });
+  }catch(e){}
+}
+
 let _saveTimer=null;
-async function sharedLoad(){
-  try{
-    const r=await window.storage.get('twt_v6_main',true);
-    return r?JSON.parse(r.value):null;
-  }catch(e){return null}
-}
-async function sharedLoadCats(){
-  try{
-    const r=await window.storage.get('twt_v6_cats',true);
-    return r?JSON.parse(r.value):null;
-  }catch(e){return null}
-}
-async function sharedLoadEvents(){
-  try{
-    const r=await window.storage.get('twt_v6_events',true);
-    return r?JSON.parse(r.value):[];
-  }catch(e){return[]}
-}
-async function sharedLoadPhotos(){
-  try{
-    const r=await window.storage.get('twt_v6_photos',true);
-    return r?JSON.parse(r.value):{};
-  }catch(e){return{}}
-}
+async function sharedLoad(){return sbGet('twt_v6_main')}
+async function sharedLoadCats(){return sbGet('twt_v6_cats')}
+async function sharedLoadEvents(){const r=await sbGet('twt_v6_events');return r||[]}
+async function sharedLoadPhotos(){const r=await sbGet('twt_v6_photos');return r||{}}
 function lsSave(){
   clearTimeout(_saveTimer);
-  _saveTimer=setTimeout(async()=>{
-    try{await window.storage.set('twt_v6_main',JSON.stringify({members:S.members,works:S.works,projects:S.projects}),true)}catch(e){}
-  },300);
+  _saveTimer=setTimeout(()=>sbSet('twt_v6_main',{members:S.members,works:S.works,projects:S.projects}),300);
 }
 function lsSavePhotos(){
   clearTimeout(_saveTimer);
-  _saveTimer=setTimeout(async()=>{
-    try{await window.storage.set('twt_v6_photos',JSON.stringify(S.memberPhotos),true)}catch(e){}
-  },300);
+  _saveTimer=setTimeout(()=>sbSet('twt_v6_photos',S.memberPhotos),300);
 }
 function lsSaveCats(){
   clearTimeout(_saveTimer);
-  _saveTimer=setTimeout(async()=>{
-    try{await window.storage.set('twt_v6_cats',JSON.stringify(S.categories),true)}catch(e){}
-  },300);
+  _saveTimer=setTimeout(()=>sbSet('twt_v6_cats',S.categories),300);
 }
 function lsSaveEvents(){
   clearTimeout(_saveTimer);
-  _saveTimer=setTimeout(async()=>{
-    try{await window.storage.set('twt_v6_events',JSON.stringify(S.events),true)}catch(e){}
-  },300);
+  _saveTimer=setTimeout(()=>sbSet('twt_v6_events',S.events),300);
 }
 
 // 초기 로딩 플레이스홀더 (비동기 초기화 전까지)
