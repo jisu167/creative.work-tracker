@@ -994,9 +994,8 @@ function openGanttAdd(mid,ds){
 }
 
 function openAddProjModal(presetMid,presetDate){
-  // reuse existing addProj modal logic
-  const catRows=S.categories.map(cat=>`<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;min-height:24px"><input type="checkbox" name="pc" value="${cat.id}"><div style="width:9px;height:9px;border-radius:50%;background:${cat.hx};flex-shrink:0"></div><span>${cat.l}</span></label>`).join('');
-  const memberRows=S.members.map(m=>`<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;min-height:24px"><input type="checkbox" name="pm" value="${m.id}"${presetMid&&presetMid===m.id?' checked':''}><span>${m.name}</span></label>`).join('');
+  const catRows=S.categories.map(cat=>`<label class="mc-row"><input type="checkbox" name="pc" value="${cat.id}"><div class="cdot" style="background:${cat.hx};width:9px;height:9px;flex-shrink:0"></div><span style="font-size:12px">${cat.l}</span></label>`).join('');
+  const memberRows=S.members.map(m=>`<label class="mc-row"><input type="checkbox" name="pm" value="${m.id}"${presetMid&&presetMid===m.id?' checked':''}>${avHTML(m,22,9)}<span style="font-size:12px">${m.name}</span></label>`).join('');
   const swatches=PROJ_COLORS.map((c,i)=>`<div class="cp-swatch${i===0?' on':''}" style="background:${c}" data-color="${c}" onclick="pickColor(this)"></div>`).join('')+`<input type="color" class="cp-custom" title="직접 선택" value="#378ADD" oninput="pickColorCustom(this)">`;
   const startVal=presetDate||today();
   const endVal=(()=>{const d=new Date(startVal+'T00:00:00');d.setDate(d.getDate()+30);return d.toISOString().slice(0,10)})();
@@ -1023,8 +1022,8 @@ function addProjFromGantt(){
 
 function openEditProjModal(pid){
   const p=S.projects.find(x=>x.id===pid);if(!p)return;
-  const catRows=S.categories.map(cat=>`<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;min-height:24px"><input type="checkbox" name="pc" value="${cat.id}"${p.categories&&p.categories.includes(cat.id)?' checked':''}><div style="width:9px;height:9px;border-radius:50%;background:${cat.hx};flex-shrink:0"></div> ${cat.l}</label>`).join('');
-  const memberRows=S.members.map(m=>`<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;min-height:24px"><input type="checkbox" name="pm" value="${m.id}"${p.members&&p.members.includes(m.id)?' checked':''}><span>${m.name}</span></label>`).join('');
+  const catRows=S.categories.map(cat=>`<label class="mc-row"><input type="checkbox" name="pc" value="${cat.id}"${p.categories&&p.categories.includes(cat.id)?' checked':''}><div class="cdot" style="background:${cat.hx};width:9px;height:9px;flex-shrink:0"></div><span style="font-size:12px">${cat.l}</span></label>`).join('');
+  const memberRows=S.members.map(m=>`<label class="mc-row"><input type="checkbox" name="pm" value="${m.id}"${p.members&&p.members.includes(m.id)?' checked':''}>${avHTML(m,22,9)}<span style="font-size:12px">${m.name}</span></label>`).join('');
   const swatches=PROJ_COLORS.map((c,i)=>`<div class="cp-swatch${c===p.color?' on':''}" style="background:${c}" data-color="${c}" onclick="pickColor(this)"></div>`).join('')+`<input type="color" class="cp-custom" title="직접 선택" value="${p.color}" oninput="pickColorCustom(this)">`;
   document.getElementById('mc').innerHTML=`<div class="modal-ov" onclick="if(event.target===this)closeM()"><div class="modal" style="width:400px"><div class="modal-title">프로젝트 수정</div>
     <div class="modal-field"><label>프로젝트명</label><input id="pn" value="${p.name}"></div>
