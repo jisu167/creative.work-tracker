@@ -421,7 +421,6 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
       <button class="tb-tab" onclick="sv('annual',this)">연간 보기</button>
       <button class="tb-tab" onclick="sv('project',this)">프로젝트</button>
       <button class="tb-tab on" onclick="sv('team',this)">주간 업무</button>
-      <button class="tb-tab" onclick="sv('gantt',this)">팀 현황</button>
     </div>
     <div class="tb-right">
       <div class="yr-nav">
@@ -450,7 +449,7 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
     <div class="panel">
       <div class="v-annual" id="va"></div>
       <div class="v-project" id="vp"></div>
-      <div class="v-team on" id="vt"></div>
+      <div class="v-team" id="vt"></div>
       <div class="v-gantt" id="vg"></div>
     </div>
   </div>
@@ -489,6 +488,22 @@ const PROJ_COLORS=[
 const DAYS=['일','월','화','수','목','금','토'];
 const MONTHS=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 const DAYNAMES=['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
+/* ── 대한민국 공휴일 (고정 양력) ── */
+const KR_HOLIDAYS={
+  '01-01':'신정',
+  '03-01':'삼일절',
+  '05-05':'어린이날',
+  '06-06':'현충일',
+  '08-15':'광복절',
+  '10-03':'개천절',
+  '10-09':'한글날',
+  '12-25':'크리스마스'
+};
+function getHoliday(ds){
+  const mmdd=ds.slice(5);
+  return KR_HOLIDAYS[mmdd]||null;
+}
+
 
 /* ── SUPABASE PERSISTENT STORAGE ── */
 const SUPABASE_URL='https://vgekouqzawikfrotqzwm.supabase.co';
@@ -605,7 +620,7 @@ function getFilterIds(){return S.annualFilter.size===0?null:[...S.annualFilter]}
 function sv(v,el){
   S.view=v;
   document.querySelectorAll('.tb-tab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
+  if(el)el.classList.add('on');
   document.getElementById('va').classList.toggle('on',v==='annual');
   document.getElementById('vp').classList.toggle('on',v==='project');
   document.getElementById('vt').classList.toggle('on',v==='team');
@@ -803,9 +818,10 @@ function rTeam(){
       return`<td class="team-cell${isToday?' is-today':''}" onclick="openDayPop('${m.id}','${ds}',event)">${cards}${addHint}</td>`;
     }).join('');
     return`<tr>
-      <td class="day-label-td${isToday?' is-today':''}">
-        <div class="day-num">${ds.slice(8)}</div>
+      <td class="day-label-td${isToday?' is-today':''}" style="${getHoliday(ds)?'background:#FFF5F5':''}">
+        <div class="day-num" style="${getHoliday(ds)||new Date(ds+'T00:00:00').getDay()===0?'color:#EF4444':new Date(ds+'T00:00:00').getDay()===6?'color:#3B82F6':''}">${ds.slice(8)}</div>
         <div class="day-kr">${dayKR[new Date(ds+'T00:00:00').getDay()]}</div>
+        ${getHoliday(ds)?`<div style="font-size:9px;color:#EF4444;font-weight:500">${getHoliday(ds)}</div>`:''}
       </td>
       ${cells}
     </tr>`;
@@ -867,9 +883,10 @@ function rGantt(){
     const isToday=ds===td;
     const isWE=dow===0||dow===6;
     const showLabel=ganttRange<=30||(ganttRange<=90&&d.getDate()%3===1)||(d.getDate()===1||d.getDate()===15);
-    return`<div class="gantt-day-col${isToday?' today':''}" style="width:${COL_W}px;min-width:${COL_W}px">
-      ${showLabel?`<div class="gantt-day-name" style="${isWE?'color:#EF4444':''}">${dayKR[dow]}</div>`:'<div class="gantt-day-name"></div>'}
-      <div class="gantt-day-num" style="${isWE?'color:#EF4444':isToday?'color:#2563EB':''}">${ganttRange<=90?d.getDate():d.getDate()===1?`${d.getMonth()+1}월`:''}</div>
+    const holiH=getHoliday(ds);
+    return`<div class="gantt-day-col${isToday?' today':''}" style="width:${COL_W}px;min-width:${COL_W}px${holiH?';background:#FFF0F0':''}">
+      ${showLabel?`<div class="gantt-day-name" style="${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':''}">${holiH?'●':dayKR[dow]}</div>`:'<div class="gantt-day-name"></div>'}
+      <div class="gantt-day-num" style="${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':isToday?'color:#2563EB':''}">${ganttRange<=90?d.getDate():d.getDate()===1?`${d.getMonth()+1}월`:''}</div>
     </div>`;
   }).join('');
 
@@ -883,7 +900,8 @@ function rGantt(){
     const cells=days.map(ds=>{
       const d=new Date(ds+'T00:00:00');const dow=d.getDay();
       const isToday=ds===td;const isWE=dow===0||dow===6;
-      return`<div class="gantt-cell${isToday?' today':''}${isWE?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px" ondblclick="openGanttAdd('${m.id}','${ds}')"></div>`;
+      const holiCell=getHoliday(ds);
+      return`<div class="gantt-cell${isToday?' today':''}${isWE||holiCell?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px${holiCell?';background:#FFF0F0':''}" ondblclick="openGanttAdd('${m.id}','${ds}')"></div>`;
     }).join('');
 
     const bars=memberProjs.map((p,pi)=>{
@@ -953,6 +971,7 @@ function rGantt(){
   const rowsHTML=memberRows.map(r=>r.rowHTML).join('')+unassignedRow;
 
   el.innerHTML=`
+    ${buildAiPanel()}
     <div class="gantt-toolbar">
       <div style="display:flex;align-items:center;gap:8px">
         <button class="gantt-nav-btn" onclick="ganttOffset-=ganttRange;rGantt()">‹</button>
@@ -1074,12 +1093,139 @@ function memberFilterHTML(){
 /* ── ANNUAL ── */
 function rAnnual(){
   const el=document.getElementById('va');
-  // sync topbar toggle state
   document.getElementById('vt-year')?.classList.toggle('on',S.annualMode==='year');
   document.getElementById('vt-month')?.classList.toggle('on',S.annualMode==='month');
-  const toggleHTML=''; // moved to topbar
-  if(S.annualMode==='year') rYearly(el,toggleHTML);
-  else rMonthly(el,toggleHTML);
+  if(S.annualMode==='year'){
+    rGanttInto(el);
+  } else {
+    rMonthly(el,'');
+  }
+}
+
+// Render gantt into any element (used for annual view embedding)
+function rGanttInto(el){
+  el.innerHTML='';
+  const fakeEl={innerHTML:''};
+  const origGet=document.getElementById.bind(document);
+  // render gantt content, capture HTML
+  const td=today();
+  const base=new Date(td+'T00:00:00');
+  base.setDate(base.getDate()+ganttOffset);
+  const startDate=new Date(base);
+  const COL_W=ganttRange<=30?38:ganttRange<=90?20:12;
+  const days=[];
+  for(let i=0;i<ganttRange;i++){const d=new Date(startDate);d.setDate(startDate.getDate()+i);days.push(d.toISOString().slice(0,10));}
+  const startStr=days[0],endStr=days[days.length-1];
+  const fmt=ds=>`${ds.slice(5,7)}/${ds.slice(8)}`;
+  const rangeLabel=`${startStr.slice(0,4)}년 ${fmt(startStr)} — ${fmt(endStr)}`;
+  const dayKR=['일','월','화','수','목','금','토'];
+  const allProjs=S.projects.filter(p=>p.start<=endStr&&p.end>=startStr);
+  const headerCols=days.map(ds=>{
+    const d=new Date(ds+'T00:00:00');const dow=d.getDay();
+    const isToday=ds===td;const isWE=dow===0||dow===6;
+    const showLabel=ganttRange<=30||(ganttRange<=90&&d.getDate()%3===1)||(d.getDate()===1||d.getDate()===15);
+    const holiH=getHoliday(ds);
+    return`<div class="gantt-day-col${isToday?' today':''}" style="width:${COL_W}px;min-width:${COL_W}px${holiH?';background:#FFF0F0':''}">
+      ${showLabel?`<div class="gantt-day-name" style="${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':''}">${holiH?'●':dayKR[dow]}</div>`:'<div class="gantt-day-name"></div>'}
+      <div class="gantt-day-num" style="${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':isToday?'color:#2563EB':''}">${ganttRange<=90?d.getDate():d.getDate()===1?`${d.getMonth()+1}월`:''}</div>
+    </div>`;
+  }).join('');
+  const memberRows=S.members.map((m,mi)=>{
+    const c=ac(mi);
+    const memberProjs=allProjs.filter(p=>p.members&&p.members.includes(m.id));
+    const cells=days.map(ds=>{
+      const d=new Date(ds+'T00:00:00');const dow=d.getDay();
+      const isToday=ds===td;const isWE=dow===0||dow===6;
+      const holiCell=getHoliday(ds);
+      return`<div class="gantt-cell${isToday?' today':''}${isWE||holiCell?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px${holiCell?';background:#FFF0F0':''}" ondblclick="openGanttAdd('${m.id}','${ds}')"></div>`;
+    }).join('');
+    const bars=memberProjs.map((p,pi)=>{
+      const ps=p.start<startStr?startStr:p.start;const pe=p.end>endStr?endStr:p.end;
+      const si=days.indexOf(ps),ei=days.indexOf(pe);if(si<0||ei<0)return'';
+      const left=si*COL_W+2,width=Math.max((ei-si+1)*COL_W-4,COL_W-4),top=4+pi*34;
+      const dday=Math.ceil((new Date(p.end)-new Date(td))/(1000*60*60*24));
+      const ddayStr=dday<0?`D+${Math.abs(dday)}`:dday===0?'D-Day':`D-${dday}`;
+      return`<div class="gantt-bar" style="left:${left}px;width:${width}px;background:${p.color}22;color:${p.color};border:1.5px solid ${p.color};top:${top}px" title="${p.name}" onclick="openEditProjModal('${p.id}')">
+        ${width>60?`<span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${p.name}</span>`:''}
+        ${width>90?`<span style="font-size:10px;opacity:.7;flex-shrink:0">${ddayStr}</span>`:''}
+      </div>`;
+    });
+    const rowH=Math.max(52,memberProjs.length*34+12);
+    const photoSrc=S.memberPhotos&&S.memberPhotos[m.id];
+    return{
+      mh:`<div class="gantt-member-row" style="height:${rowH}px">
+        <div class="gantt-member-avatar" style="background:${c.bg};color:${c.t}">${photoSrc?`<img src="${photoSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${m.name.slice(0,2)}`}</div>
+        <div class="gantt-member-name">${m.name}</div>
+        <div style="font-size:10px;color:var(--text-2);margin-left:auto">${memberProjs.length}개</div>
+      </div>`,
+      rh:`<div class="gantt-row" style="height:${rowH}px;position:relative">${cells}${bars.join('')}</div>`
+    };
+  });
+  // Build mini calendar for current month
+  const miniCalHTML=(()=>{
+    const baseDate=new Date(days[0]+'T00:00:00');
+    const months=[];
+    const seen=new Set();
+    days.forEach(ds=>{const m=ds.slice(0,7);if(!seen.has(m)){seen.add(m);months.push(m);}});
+    return months.slice(0,ganttRange<=30?1:ganttRange<=90?3:5).map(ym=>{
+      const [y,m]=ym.split('-').map(Number);
+      const firstDay=new Date(y,m-1,1).getDay();
+      const lastDate=new Date(y,m,0).getDate();
+      const dayKR2=['일','월','화','수','목','금','토'];
+      let cells='';
+      for(let i=0;i<firstDay;i++) cells+=`<div></div>`;
+      for(let d=1;d<=lastDate;d++){
+        const ds=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const dow=new Date(ds+'T00:00:00').getDay();
+        const isToday=ds===td;
+        const holi=getHoliday(ds);
+        const color=isToday?'#fff':holi||dow===0?'#EF4444':dow===6?'#3B82F6':'var(--text)';
+        const bg=isToday?'var(--accent)':'';
+        cells+=`<div style="text-align:center;font-size:11px;font-weight:${isToday?700:400};color:${color};background:${bg};border-radius:50%;width:22px;height:22px;line-height:22px;margin:auto;cursor:pointer" title="${holi||''}" onclick="ganttOffset=0;ganttRange=30;rAnnual()">${d}</div>`;
+      }
+      return`<div style="background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px;min-width:200px">
+        <div style="font-size:12px;font-weight:600;color:var(--text);text-align:center;margin-bottom:8px">${y}년 ${m}월</div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px">
+          ${dayKR2.map((d,i)=>`<div style="text-align:center;font-size:10px;font-weight:500;color:${i===0?'#EF4444':i===6?'#3B82F6':'var(--text-2)'}">${d}</div>`).join('')}
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">${cells}</div>
+      </div>`;
+    }).join('');
+  })();
+
+  el.innerHTML=`
+    ${buildAiPanel()}
+    <div class="gantt-toolbar">
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="gantt-nav-btn" onclick="ganttOffset-=ganttRange;rAnnual()">‹</button>
+        <button class="gantt-nav-btn" onclick="ganttOffset=0;rAnnual()">오늘</button>
+        <button class="gantt-nav-btn" onclick="ganttOffset+=ganttRange;rAnnual()">›</button>
+        <span style="font-size:13px;font-weight:600;color:var(--text);margin-left:4px">${rangeLabel}</span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="gantt-range-btn${ganttRange===30?' on':''}" onclick="ganttRange=30;rAnnual()">1개월</button>
+        <button class="gantt-range-btn${ganttRange===90?' on':''}" onclick="ganttRange=90;rAnnual()">3개월</button>
+        <button class="gantt-range-btn${ganttRange===150?' on':''}" onclick="ganttRange=150;rAnnual()">5개월</button>
+        <button class="gantt-range-btn" style="background:var(--accent);color:#fff;border-color:var(--accent)" onclick="openAddProjModal()">+ 프로젝트 추가</button>
+      </div>
+    </div>
+    <div class="gantt-wrap">
+      <div class="gantt-members">
+        <div class="gantt-member-header">팀원 (${S.members.length}명)</div>
+        ${memberRows.map(r=>r.mh).join('')}
+      </div>
+      <div class="gantt-chart" id="gantt-chart-annual">
+        <div class="gantt-header">${headerCols}</div>
+        <div class="gantt-rows">${memberRows.map(r=>r.rh).join('')}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;padding:16px;overflow-x:auto;border-top:1px solid var(--border-light);flex-wrap:wrap">
+      ${miniCalHTML}
+    </div>`;
+  setTimeout(()=>{
+    const sc=document.getElementById('gantt-chart-annual');
+    if(sc&&ganttOffset===0){const ti=days.indexOf(td);if(ti>0)sc.scrollLeft=Math.max(0,(ti-3)*COL_W);}
+  },50);
 }
 
 function rYearly(el,toggleHTML){
@@ -1311,8 +1457,13 @@ function rMonthly(el,toggleHTML){
     const isTod=ds===td?' tod':'';
     const projBars=projs.map(p=>`<div class="mdc-proj-bar" style="background:${p.color}20;color:${p.color};border-left:2px solid ${p.color}">${p.name}</div>`).join('');
     const workDots=ws.map(w=>{const cat=gc(w.catId);return`<div class="dd" style="background:${cat.hx};width:5px;height:5px;border-radius:50%"></div>`}).join('');
-    cells+=`<div class="mdc${isTod}" onclick="gotoDate('${ds}')">
-      <div class="mdc-num">${d}</div>${projBars}
+    const holi=getHoliday(ds);
+    const dow=new Date(ds+'T00:00:00').getDay();
+    const isWE=dow===0||dow===6;
+    cells+=`<div class="mdc${isTod}" onclick="gotoDate('${ds}')" style="${holi?'background:#FFF5F5':isWE?'background:#FAFAFA':''}">
+      <div class="mdc-num" style="${holi||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':''}">${d}</div>
+      ${holi?`<div style="font-size:8px;color:#EF4444;font-weight:500;line-height:1;margin-bottom:2px">${holi}</div>`:''}
+      ${projBars}
       ${workDots?`<div class="mdc-work-dots">${workDots}</div>`:''}
     </div>`;
   }
