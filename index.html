@@ -369,6 +369,43 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
 .gantt-range-btn{padding:5px 10px;font-size:12px;font-weight:500;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);cursor:pointer;transition:all .12s}
 .gantt-range-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .gantt-nav-btn{width:28px;height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+
+/* ── PROJECT DETAIL PAGE ── */
+.proj-detail-overlay{position:fixed;inset:0;z-index:200;display:flex;justify-content:flex-end;background:rgba(0,0,0,.3);animation:fadeIn .15s}
+.proj-detail-panel{width:min(780px,95vw);height:100vh;background:var(--bg);overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,.12);display:flex;flex-direction:column;animation:slideInRight .2s}
+@keyframes slideInRight{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+.pd-cover{height:120px;display:flex;align-items:flex-end;padding:16px 24px;position:relative;flex-shrink:0}
+.pd-cover-emoji{font-size:40px;line-height:1;margin-bottom:-20px;position:relative;z-index:1}
+.pd-body{padding:24px;flex:1}
+.pd-title{font-size:28px;font-weight:700;color:var(--text);margin:16px 0 20px;outline:none;border:none;background:none;width:100%;font-family:'DM Sans',sans-serif;cursor:text}
+.pd-title:focus{border-bottom:2px solid var(--accent)}
+.pd-props{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border-light)}
+.pd-prop-row{display:flex;align-items:center;gap:12px}
+.pd-prop-label{font-size:12px;color:var(--text-2);width:80px;flex-shrink:0;font-weight:500}
+.pd-prop-val{font-size:13px;color:var(--text)}
+.pd-status-badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.pd-section-title{font-size:13px;font-weight:600;color:var(--text-2);margin:20px 0 10px;text-transform:uppercase;letter-spacing:.5px}
+.pd-tasks{display:flex;flex-direction:column;gap:4px;margin-bottom:16px}
+.pd-task-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);transition:background .1s;cursor:pointer}
+.pd-task-row:hover{background:var(--bg-hover)}
+.pd-task-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s}
+.pd-task-check.done{background:var(--accent);border-color:var(--accent);color:#fff}
+.pd-task-text{font-size:13px;flex:1;outline:none;background:none;border:none;color:var(--text);font-family:'DM Sans',sans-serif;cursor:text}
+.pd-task-date{font-size:11px;color:var(--text-3)}
+.pd-add-task{display:flex;align-items:center;gap:8px;padding:8px 10px;color:var(--text-3);font-size:13px;cursor:pointer;border-radius:var(--radius-sm)}
+.pd-add-task:hover{background:var(--bg-hover);color:var(--text-2)}
+.pd-memo{width:100%;min-height:120px;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:12px;font-size:13px;color:var(--text);background:var(--bg-hover);font-family:'DM Sans',sans-serif;resize:vertical;line-height:1.6;outline:none}
+.pd-memo:focus{border-color:var(--accent);background:var(--bg)}
+.pd-drive-link{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg-hover);border:1px solid var(--border-light);border-radius:var(--radius-sm);font-size:12px;color:var(--accent);text-decoration:none;margin-bottom:8px;transition:background .12s}
+.pd-drive-link:hover{background:var(--border-light)}
+.pd-drive-input{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;font-size:12px;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;outline:none}
+.pd-drive-input:focus{border-color:var(--accent)}
+.pd-header{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border-light);flex-shrink:0}
+.pd-close-btn{width:32px;height:32px;border:none;background:none;cursor:pointer;border-radius:var(--radius-sm);font-size:18px;color:var(--text-2);display:flex;align-items:center;justify-content:center}
+.pd-close-btn:hover{background:var(--bg-hover)}
+.pd-edit-btn{padding:6px 14px;font-size:12px;font-weight:500;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);cursor:pointer}
+.pd-edit-btn:hover{background:var(--bg-hover)}
+.pd-save-btn{padding:6px 14px;font-size:12px;font-weight:500;border:none;border-radius:var(--radius-sm);background:var(--accent);color:#fff;cursor:pointer}
 /* event color swatches (reuse cp-swatch) */
 .evt-color-row{display:flex;gap:6px;flex-wrap:wrap}
 
@@ -1783,6 +1820,146 @@ function showAddProj(){
   setTimeout(()=>document.getElementById('pn').focus(),50);
 }
 function showEditProj(id){
+  openProjDetail(id);
+}
+
+function openProjDetail(id){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  if(!p.detail)p.detail={tasks:[],memo:'',driveLink:''};
+  const d=p.detail;
+
+  // Status
+  const now=today();
+  const dday=Math.ceil((new Date(p.end)-new Date(now))/(1000*60*60*24));
+  const status=dday<0?{l:'완료',bg:'#DCFCE7',c:'#16A34A'}:dday===0?{l:'D-Day',bg:'#FEF9C3',c:'#CA8A04'}:dday<=7?{l:'마감임박',bg:'#FEE2E2',c:'#DC2626'}:{l:'진행중',bg:'#DBEAFE',c:'#2563EB'};
+
+  // Members
+  const memberAvatars=S.members.filter(m=>p.members.includes(m.id)).map((m,i)=>`${avHTML(m,26,i)}`).join('');
+
+  // Categories
+  const catBadges=(p.categories||[]).map(cid=>{const c=S.categories.find(x=>x.id===cid);return c?`<span style="background:${c.hx}22;color:${c.hx};border:1px solid ${c.hx}44;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500">${c.l}</span>`:''}).join(' ');
+
+  // Tasks
+  const taskRows=(d.tasks||[]).map((t,i)=>`
+    <div class="pd-task-row" id="pd-task-${i}">
+      <div class="pd-task-check${t.done?' done':''}" onclick="togglePdTask('${id}',${i})">
+        ${t.done?'✓':''}
+      </div>
+      <input class="pd-task-text" value="${t.text||''}" style="${t.done?'text-decoration:line-through;color:var(--text-3)':''}"
+        onchange="updatePdTask('${id}',${i},this.value)"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();addPdTask('${id}')}"
+        placeholder="할 일 입력...">
+      <input type="date" class="pd-task-date" value="${t.date||''}" style="border:none;background:none;font-size:11px;color:var(--text-3);cursor:pointer" onchange="updatePdTaskDate('${id}',${i},this.value)">
+    </div>`).join('');
+
+  const driveHTML=d.driveLink
+    ? `<a class="pd-drive-link" href="${d.driveLink}" target="_blank">📁 ${d.driveLink}</a>
+       <input class="pd-drive-input" value="${d.driveLink}" placeholder="Google Drive 링크" onchange="updatePdDrive('${id}',this.value)">`
+    : `<input class="pd-drive-input" value="" placeholder="Google Drive 링크 입력..." onchange="updatePdDrive('${id}',this.value)">`;
+
+  const overlay=document.createElement('div');
+  overlay.className='proj-detail-overlay';
+  overlay.id='proj-detail-overlay';
+  overlay.onclick=(e)=>{if(e.target===overlay)closeProjDetail();};
+  overlay.innerHTML=`
+    <div class="proj-detail-panel">
+      <div class="pd-cover" style="background:linear-gradient(135deg,${p.color}33,${p.color}11)">
+        <div style="width:52px;height:52px;border-radius:12px;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0">
+          ${p.name.slice(0,1)}
+        </div>
+      </div>
+      <div class="pd-header">
+        <button class="pd-edit-btn" onclick="closeProjDetail();setTimeout(()=>openProjEditModal('${id}'),100)">⚙ 설정</button>
+        <button class="pd-save-btn" onclick="saveProjDetail('${id}')">저장</button>
+        <button class="pd-close-btn" onclick="closeProjDetail()">✕</button>
+      </div>
+      <div class="pd-body">
+        <input class="pd-title" id="pd-title" value="${p.name}" placeholder="프로젝트 이름">
+        <div class="pd-props">
+          <div class="pd-prop-row">
+            <span class="pd-prop-label">Status</span>
+            <span class="pd-status-badge" style="background:${status.bg};color:${status.c}">${status.l}</span>
+          </div>
+          <div class="pd-prop-row">
+            <span class="pd-prop-label">기간</span>
+            <span class="pd-prop-val">${p.start} ~ ${p.end} (D-${dday<0?''+Math.abs(dday):dday})</span>
+          </div>
+          <div class="pd-prop-row">
+            <span class="pd-prop-label">분류</span>
+            <span class="pd-prop-val">${catBadges||'—'}</span>
+          </div>
+          <div class="pd-prop-row">
+            <span class="pd-prop-label">담당자</span>
+            <div style="display:flex;gap:4px;align-items:center">${memberAvatars}</div>
+          </div>
+        </div>
+
+        <div class="pd-section-title">📌 드라이브 링크</div>
+        ${driveHTML}
+
+        <div class="pd-section-title">✅ 태스크</div>
+        <div class="pd-tasks" id="pd-tasks">${taskRows}</div>
+        <div class="pd-add-task" onclick="addPdTask('${id}')">+ 새 태스크 추가</div>
+
+        <div class="pd-section-title">📝 메모</div>
+        <textarea class="pd-memo" id="pd-memo" placeholder="프로젝트 관련 메모를 자유롭게 작성하세요...">${d.memo||''}</textarea>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function closeProjDetail(){
+  const el=document.getElementById('proj-detail-overlay');
+  if(el)el.remove();
+}
+
+function saveProjDetail(id){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  if(!p.detail)p.detail={tasks:[],memo:'',driveLink:''};
+  const titleEl=document.getElementById('pd-title');
+  const memoEl=document.getElementById('pd-memo');
+  if(titleEl)p.name=titleEl.value.trim()||p.name;
+  if(memoEl)p.detail.memo=memoEl.value;
+  lsSave();rProject();
+  // Flash save confirmation
+  const btn=document.querySelector('.pd-save-btn');
+  if(btn){btn.textContent='저장됨 ✓';btn.style.background='#16A34A';setTimeout(()=>{btn.textContent='저장';btn.style.background='';},1500);}
+}
+
+function togglePdTask(id,i){
+  const p=S.projects.find(x=>x.id===id);if(!p||!p.detail)return;
+  p.detail.tasks[i].done=!p.detail.tasks[i].done;
+  lsSave();closeProjDetail();openProjDetail(id);
+}
+
+function updatePdTask(id,i,val){
+  const p=S.projects.find(x=>x.id===id);if(!p||!p.detail)return;
+  p.detail.tasks[i].text=val;lsSave();
+}
+
+function updatePdTaskDate(id,i,val){
+  const p=S.projects.find(x=>x.id===id);if(!p||!p.detail)return;
+  p.detail.tasks[i].date=val;lsSave();
+}
+
+function addPdTask(id){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  if(!p.detail)p.detail={tasks:[],memo:'',driveLink:''};
+  p.detail.tasks.push({text:'',done:false,date:''});
+  lsSave();closeProjDetail();openProjDetail(id);
+  setTimeout(()=>{
+    const inputs=document.querySelectorAll('.pd-task-text');
+    if(inputs.length)inputs[inputs.length-1].focus();
+  },100);
+}
+
+function updatePdDrive(id,val){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  if(!p.detail)p.detail={tasks:[],memo:'',driveLink:''};
+  p.detail.driveLink=val;lsSave();
+}
+
+function openProjEditModal(id){
   const p=S.projects.find(x=>x.id===id);if(!p)return;
   const memberRows=S.members.map(m=>{
     const checked=p.members.includes(m.id)?'checked':'';
@@ -1797,14 +1974,10 @@ function showEditProj(id){
     return`<div class="cp-swatch${on}" style="background:${c}" data-color="${c}" onclick="pickColor(this)"></div>`;
   }).join('');
   document.getElementById('mc').innerHTML=`<div class="modal-ov" onclick="if(event.target===this)closeM()"><div class="modal">
-    <h3>프로젝트 수정</h3>
+    <h3>프로젝트 설정</h3>
     <div class="modal-field"><label>이름</label><input id="pn" type="text" value="${p.name}"></div>
     <div class="modal-field"><label>색상</label>
       <div class="color-picker" id="cp">${swatches}</div>
-      <div style="margin-top:6px;display:flex;align-items:center;gap:6px">
-        <div style="width:14px;height:14px;border-radius:3px;background:${p.color};flex-shrink:0"></div>
-        <span style="font-size:11px;color:var(--text-2)">현재 색상</span>
-      </div>
     </div>
     <div class="modal-field"><label>시작일</label><input id="ps" type="date" value="${p.start}"></div>
     <div class="modal-field"><label>종료일</label><input id="pe" type="date" value="${p.end}"></div>
