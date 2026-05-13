@@ -59,8 +59,8 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
 .cat-item:hover .cat-edit-btn{opacity:1!important}
 .cdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .panel{overflow-y:auto;height:calc(100vh - 56px)}
-.v-annual,.v-daily,.v-team,.v-project{display:none}
-.v-annual.on,.v-daily.on,.v-team.on,.v-project.on{display:block}
+.v-annual,.v-daily,.v-team,.v-project,.v-gantt{display:none}
+.v-annual.on,.v-daily.on,.v-team.on,.v-project.on,.v-gantt.on{display:block}
 .v-team.on{display:flex;flex-direction:column;height:calc(100vh - 56px);overflow:hidden}
 
 /* toggle */
@@ -297,7 +297,7 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
 .cp-custom::-webkit-color-swatch{border:none;border-radius:3px}
 .cp-swatch:hover{transform:scale(1.1)}
 .cp-swatch.on{border-color:var(--text);transform:scale(1.1)}
-.member-check-grid{display:flex;flex-direction:column;gap:4px;max-height:150px;overflow-y:auto}
+.member-check-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;max-height:150px;overflow-y:auto}
 .mc-row{display:flex;align-items:center;gap:8px;padding:5px 7px;border-radius:var(--radius-xs);cursor:pointer;transition:background .12s}
 .mc-row:hover{background:var(--bg-sub)}
 .mc-row input{cursor:pointer;accent-color:var(--accent)}
@@ -345,22 +345,24 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
 .v-gantt.on{display:flex}
 .gantt-toolbar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border-light);flex-shrink:0;background:var(--bg)}
 .gantt-toolbar-title{font-size:13px;font-weight:600;color:var(--text);min-width:80px}
-.gantt-wrap{display:flex;flex:1;overflow:hidden}
+.gantt-wrap{display:flex;flex:1;overflow:hidden;border-top:2px solid var(--border-light);margin-top:4px}
 .gantt-members{width:180px;flex-shrink:0;border-right:1px solid var(--border-light);overflow-y:auto;background:var(--bg)}
-.gantt-member-header{height:44px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;padding:0 12px;font-size:11px;font-weight:600;color:var(--text-2);background:var(--bg-hover)}
-.gantt-member-row{height:52px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;padding:0 12px;gap:8px;font-size:13px;color:var(--text)}
+.gantt-member-header{height:48px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;padding:0 12px;font-size:11px;font-weight:600;color:var(--text-2);background:var(--bg-hover)}
+.gantt-member-row{border-bottom:1px solid var(--border-light);display:flex;align-items:center;padding:0 12px;gap:8px;font-size:13px;color:var(--text);cursor:pointer}
+.gantt-member-row:first-child{border-top:2px solid var(--border-light)}
 .gantt-member-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
 .gantt-member-avatar img{width:100%;height:100%;object-fit:cover}
 .gantt-member-name{font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gantt-chart{flex:1;overflow:auto;position:relative}
-.gantt-header{display:flex;height:44px;border-bottom:1px solid var(--border-light);position:sticky;top:0;z-index:10;background:var(--bg);min-width:max-content}
-.gantt-day-col{flex-shrink:0;border-right:1px solid var(--border-light);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-hover)}
+.gantt-header{display:flex;height:48px;border-bottom:1px solid var(--border-light);position:sticky;top:0;z-index:10;background:var(--bg);min-width:max-content}
+.gantt-day-col{flex-shrink:0;border-right:1px solid var(--border-light);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-hover);height:44px;overflow:hidden}
 .gantt-day-col.today{background:#EFF6FF}
-.gantt-day-name{font-size:10px;color:var(--text-2);font-weight:500}
-.gantt-day-num{font-size:13px;font-weight:600;color:var(--text)}
+.gantt-day-name{font-size:9px;color:var(--text-2);font-weight:500;white-space:nowrap}
+.gantt-day-num{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap}
 .gantt-day-col.today .gantt-day-num{color:#2563EB}
 .gantt-rows{min-width:max-content}
-.gantt-row{height:52px;display:flex;position:relative;border-bottom:1px solid var(--border-light)}
+.gantt-row{display:flex;position:relative;border-bottom:1px solid var(--border-light);overflow:hidden}
+.gantt-rows>.gantt-row:first-child{margin-top:0}
 .gantt-cell{flex-shrink:0;border-right:1px solid var(--border-light);height:100%}
 .gantt-cell.today{background:#EFF6FF20}
 .gantt-cell.weekend{background:var(--bg-hover)}
@@ -369,6 +371,107 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
 .gantt-range-btn{padding:5px 10px;font-size:12px;font-weight:500;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);cursor:pointer;transition:all .12s}
 .gantt-range-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .gantt-nav-btn{width:28px;height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+
+
+
+/* ── GANTT2 PROJECT-BASED LAYOUT ── */
+.gantt2-wrap{flex:1;overflow:auto;display:flex;flex-direction:column}
+.gantt2-table{width:100%;border-collapse:collapse;min-width:max-content}
+.gantt2-label-th{width:220px;min-width:220px;padding:10px 16px;font-size:11px;font-weight:600;color:var(--text-2);background:var(--bg-hover);border-bottom:2px solid var(--border-light);position:sticky;left:0;z-index:5;text-align:left}
+.gantt2-dates-th{padding:0;background:var(--bg-hover);border-bottom:2px solid var(--border-light);overflow-x:auto;white-space:nowrap}
+.gantt2-cat-row td{background:var(--bg);border-bottom:1px solid var(--border-light)}
+.gantt2-row{cursor:pointer;transition:background .1s}
+.gantt2-row:hover .gantt2-label-cell{background:var(--bg-hover)}
+.gantt2-row:hover .gantt2-bar-cell{background:#F8FAFF}
+.gantt2-label-cell{width:220px;min-width:220px;padding:8px 16px;border-bottom:1px solid var(--border-light);border-right:1px solid var(--border-light);background:var(--bg);position:sticky;left:0;z-index:2;vertical-align:middle}
+.gantt2-proj-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.gantt2-proj-dates{font-size:11px;color:var(--text-3);margin-top:2px}
+.gantt2-bar-cell{padding:0;border-bottom:1px solid var(--border-light);vertical-align:middle;height:48px}
+.gantt-bar2{position:absolute;top:50%;transform:translateY(-50%);height:28px;border-radius:14px;display:flex;align-items:center;padding:0 10px;cursor:pointer;z-index:2;transition:opacity .15s;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.gantt-bar2:hover{opacity:.88;filter:brightness(1.05)}
+/* ── GOOGLE CALENDAR STYLE MONTHLY VIEW ── */
+.gcal-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden}
+.gcal-toolbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border-light);flex-shrink:0;gap:12px;flex-wrap:wrap}
+.gcal-nav-btn{width:30px;height:30px;border:1px solid var(--border);border-radius:50%;background:var(--bg);color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .12s}
+.gcal-nav-btn:hover{background:var(--bg-hover)}
+.gcal-today-btn{padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:var(--bg);color:var(--text);cursor:pointer;font-size:13px;font-weight:500;transition:background .12s}
+.gcal-today-btn:hover{background:var(--bg-hover)}
+.gcal-month-label{font-size:18px;font-weight:600;color:var(--text)}
+.gcal-body{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.gcal-dow-header{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border-light);flex-shrink:0}
+.gcal-dow{padding:8px 0;text-align:center;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase}
+.gcal-dow.sun{color:#EF4444}
+.gcal-dow.sat{color:#3B82F6}
+.gcal-grid{display:grid;grid-template-columns:repeat(7,1fr);flex:1;overflow-y:auto}
+.gcal-cell{border-right:1px solid var(--border-light);border-bottom:1px solid var(--border-light);padding:4px;min-height:110px;cursor:pointer;transition:background .1s;display:flex;flex-direction:column;gap:2px}
+.gcal-cell:hover{background:var(--bg-hover)}
+.gcal-cell.today{background:#EFF6FF}
+.gcal-cell.weekend{background:#FAFAFA}
+.gcal-cell.holiday{background:#FFF5F5}
+.gcal-cell.other-month{background:#F9F9F9}
+.gcal-date-row{display:flex;align-items:center;gap:4px;margin-bottom:2px}
+.gcal-date-num{font-size:13px;font-weight:500;color:var(--text);min-width:26px;text-align:center;line-height:26px}
+.gcal-holi-label{font-size:9px;color:#EF4444;font-weight:500}
+.gcal-date.other{font-size:12px;color:var(--text-3);padding:4px}
+.gcal-event-bar{display:flex;align-items:center;padding:2px 6px;border-radius:3px;font-size:11px;font-weight:500;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;transition:opacity .12s;line-height:18px}
+.gcal-event-bar:hover{opacity:.85;filter:brightness(.95)}
+.gcal-event-bar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gcal-work-item{display:flex;align-items:center;gap:4px;padding:1px 4px;border-radius:3px;font-size:11px;color:var(--text);overflow:hidden;white-space:nowrap;cursor:pointer;transition:background .1s}
+.gcal-work-item:hover{background:var(--border-light)}
+.gcal-work-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.gcal-work-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gcal-more{font-size:10px;color:var(--accent);cursor:pointer;padding:1px 4px;font-weight:500}
+.gcal-more:hover{text-decoration:underline}
+
+/* ── GANTT SPREADSHEET STYLE (연간보기) ── */
+.gsi-label-panel{width:280px;flex-shrink:0;border-right:2px solid var(--border-light);display:flex;flex-direction:column;overflow:hidden}
+.gsi-label-header{display:flex;height:48px;border-bottom:2px solid var(--border-light);background:var(--bg-hover);flex-shrink:0}
+.gsi-label-body{flex:1;overflow-y:auto;overflow-x:hidden}
+.gsi-label-row{display:flex;align-items:center;border-bottom:1px solid var(--border-light);background:var(--bg);transition:background .1s}
+.gsi-label-row:hover{background:var(--bg-hover)}
+.gsi-col-member{width:90px;min-width:90px;padding:4px 8px;display:flex;align-items:center;gap:5px;border-right:1px solid var(--border-light);font-size:12px;font-weight:600;color:var(--text);overflow:hidden}
+.gsi-col-proj{flex:1;padding:4px 8px;font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;border-right:1px solid var(--border-light)}
+.gsi-col-proj:hover{color:var(--accent)}
+.gsi-col-status{width:70px;min-width:70px;padding:4px 6px;display:flex;align-items:center;justify-content:center}
+.gsi-label-header .gsi-col-member{font-size:11px;font-weight:600;color:var(--text-2)}
+.gsi-label-header .gsi-col-proj{font-size:11px;font-weight:600;color:var(--text-2)}
+.gsi-label-header .gsi-col-status{font-size:11px;font-weight:600;color:var(--text-2);text-align:center}
+/* ── PROJECT DETAIL PAGE ── */
+.proj-detail-overlay{position:fixed;inset:0;z-index:200;display:flex;justify-content:flex-end;background:rgba(0,0,0,.3);animation:fadeIn .15s}
+.proj-detail-panel{width:min(780px,95vw);height:100vh;background:var(--bg);overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,.12);display:flex;flex-direction:column;animation:slideInRight .2s}
+@keyframes slideInRight{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+.pd-cover{height:120px;display:flex;align-items:flex-end;padding:16px 24px;position:relative;flex-shrink:0}
+.pd-cover-emoji{font-size:40px;line-height:1;margin-bottom:-20px;position:relative;z-index:1}
+.pd-body{padding:24px;flex:1}
+.pd-title{font-size:28px;font-weight:700;color:var(--text);margin:16px 0 20px;outline:none;border:none;background:none;width:100%;font-family:'DM Sans',sans-serif;cursor:text}
+.pd-title:focus{border-bottom:2px solid var(--accent)}
+.pd-props{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border-light)}
+.pd-prop-row{display:flex;align-items:center;gap:12px}
+.pd-prop-label{font-size:12px;color:var(--text-2);width:80px;flex-shrink:0;font-weight:500}
+.pd-prop-val{font-size:13px;color:var(--text)}
+.pd-status-badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.pd-section-title{font-size:13px;font-weight:600;color:var(--text-2);margin:20px 0 10px;text-transform:uppercase;letter-spacing:.5px}
+.pd-tasks{display:flex;flex-direction:column;gap:4px;margin-bottom:16px}
+.pd-task-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);transition:background .1s;cursor:pointer}
+.pd-task-row:hover{background:var(--bg-hover)}
+.pd-task-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s}
+.pd-task-check.done{background:var(--accent);border-color:var(--accent);color:#fff}
+.pd-task-text{font-size:13px;flex:1;outline:none;background:none;border:none;color:var(--text);font-family:'DM Sans',sans-serif;cursor:text}
+.pd-task-date{font-size:11px;color:var(--text-3)}
+.pd-add-task{display:flex;align-items:center;gap:8px;padding:8px 10px;color:var(--text-3);font-size:13px;cursor:pointer;border-radius:var(--radius-sm)}
+.pd-add-task:hover{background:var(--bg-hover);color:var(--text-2)}
+.pd-memo{width:100%;min-height:120px;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:12px;font-size:13px;color:var(--text);background:var(--bg-hover);font-family:'DM Sans',sans-serif;resize:vertical;line-height:1.6;outline:none}
+.pd-memo:focus{border-color:var(--accent);background:var(--bg)}
+.pd-drive-link{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg-hover);border:1px solid var(--border-light);border-radius:var(--radius-sm);font-size:12px;color:var(--accent);text-decoration:none;margin-bottom:8px;transition:background .12s}
+.pd-drive-link:hover{background:var(--border-light)}
+.pd-drive-input{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;font-size:12px;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;outline:none}
+.pd-drive-input:focus{border-color:var(--accent)}
+.pd-header{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border-light);flex-shrink:0}
+.pd-close-btn{width:32px;height:32px;border:none;background:none;cursor:pointer;border-radius:var(--radius-sm);font-size:18px;color:var(--text-2);display:flex;align-items:center;justify-content:center}
+.pd-close-btn:hover{background:var(--bg-hover)}
+.pd-edit-btn{padding:6px 14px;font-size:12px;font-weight:500;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);cursor:pointer}
+.pd-edit-btn:hover{background:var(--bg-hover)}
+.pd-save-btn{padding:6px 14px;font-size:12px;font-weight:500;border:none;border-radius:var(--radius-sm);background:var(--accent);color:#fff;cursor:pointer}
 /* event color swatches (reuse cp-swatch) */
 .evt-color-row{display:flex;gap:6px;flex-wrap:wrap}
 
@@ -418,10 +521,9 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
   <div class="topbar">
     <div class="tb-brand">팀 업무 트래커</div>
     <div class="tb-tabs">
-      <button class="tb-tab" onclick="sv('annual',this)">연간 보기</button>
+      <button class="tb-tab" onclick="sv('annual',this)">일정</button>
       <button class="tb-tab" onclick="sv('project',this)">프로젝트</button>
       <button class="tb-tab on" onclick="sv('team',this)">주간 업무</button>
-      <button class="tb-tab" onclick="sv('gantt',this)">팀 현황</button>
     </div>
     <div class="tb-right">
       <div class="yr-nav">
@@ -450,7 +552,7 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
     <div class="panel">
       <div class="v-annual" id="va"></div>
       <div class="v-project" id="vp"></div>
-      <div class="v-team on" id="vt"></div>
+      <div class="v-team" id="vt"></div>
       <div class="v-gantt" id="vg"></div>
     </div>
   </div>
@@ -489,6 +591,22 @@ const PROJ_COLORS=[
 const DAYS=['일','월','화','수','목','금','토'];
 const MONTHS=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 const DAYNAMES=['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
+/* ── 대한민국 공휴일 (고정 양력) ── */
+const KR_HOLIDAYS={
+  '01-01':'신정',
+  '03-01':'삼일절',
+  '05-05':'어린이날',
+  '06-06':'현충일',
+  '08-15':'광복절',
+  '10-03':'개천절',
+  '10-09':'한글날',
+  '12-25':'크리스마스'
+};
+function getHoliday(ds){
+  const mmdd=ds.slice(5);
+  return KR_HOLIDAYS[mmdd]||null;
+}
+
 
 /* ── SUPABASE PERSISTENT STORAGE ── */
 const SUPABASE_URL='https://vgekouqzawikfrotqzwm.supabase.co';
@@ -605,7 +723,7 @@ function getFilterIds(){return S.annualFilter.size===0?null:[...S.annualFilter]}
 function sv(v,el){
   S.view=v;
   document.querySelectorAll('.tb-tab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
+  if(el)el.classList.add('on');
   document.getElementById('va').classList.toggle('on',v==='annual');
   document.getElementById('vp').classList.toggle('on',v==='project');
   document.getElementById('vt').classList.toggle('on',v==='team');
@@ -764,7 +882,7 @@ function rTeam(){
 
   const fmt=ds=>ds.slice(5).replace('-','/');
   const wLabel=`${weekDates[0].slice(0,4)}년  ${fmt(weekDates[0])} — ${fmt(weekDates[6])}`;
-  const dayKR=['월','화','수','목','금','토','일'];
+  const dayKR=['일','월','화','수','목','금','토'];
 
   const totalWorks=Object.values(S.works).reduce((s,a)=>s+a.length,0);
   const todayWorks=S.members.reduce((s,m)=>s+gw(td,m.id).length,0);
@@ -790,7 +908,7 @@ function rTeam(){
       const projs=projsOnDate(ds,[m.id]);
       let cards='';
       projs.forEach(p=>{
-        cards+=`<div class="tv-proj-card" style="background:${p.color}1A;border-left:3px solid ${p.color};color:${p.color}" title="${p.name}">${p.name}</div>`;
+        cards+=`<div class="tv-proj-card" style="background:${p.color}1A;border-left:3px solid ${p.color};color:${p.color};cursor:pointer" title="${p.name}" onclick="event.stopPropagation();openProjDetail('${p.id}')">${p.name}</div>`;
       });
       ws.forEach((w)=>{
         const cat=gc(w.catId);
@@ -803,9 +921,10 @@ function rTeam(){
       return`<td class="team-cell${isToday?' is-today':''}" onclick="openDayPop('${m.id}','${ds}',event)">${cards}${addHint}</td>`;
     }).join('');
     return`<tr>
-      <td class="day-label-td${isToday?' is-today':''}">
-        <div class="day-num">${ds.slice(8)}</div>
-        <div class="day-kr">${dayKR[di]}</div>
+      <td class="day-label-td${isToday?' is-today':''}" style="${getHoliday(ds)?'background:#FFF5F5':''}">
+        <div class="day-num" style="${getHoliday(ds)||new Date(ds+'T00:00:00').getDay()===0?'color:#EF4444':new Date(ds+'T00:00:00').getDay()===6?'color:#3B82F6':''}">${ds.slice(8)}</div>
+        <div class="day-kr">${dayKR[new Date(ds+'T00:00:00').getDay()]}</div>
+        ${getHoliday(ds)?`<div style="font-size:9px;color:#EF4444;font-weight:500">${getHoliday(ds)}</div>`:''}
       </td>
       ${cells}
     </tr>`;
@@ -849,7 +968,7 @@ function rGantt(){
   const base=new Date(td+'T00:00:00');
   base.setDate(base.getDate()+ganttOffset);
   const startDate=new Date(base);
-  const COL_W=ganttRange<=30?38:ganttRange<=90?20:12;
+  const COL_W=ganttRange<=30?40:ganttRange<=90?26:16;
 
   const days=[];
   for(let i=0;i<ganttRange;i++){
@@ -862,18 +981,18 @@ function rGantt(){
   const dayKR=['일','월','화','수','목','금','토'];
 
   const headerCols=days.map(ds=>{
-    const d=new Date(ds+'T00:00:00');
-    const dow=d.getDay();
-    const isToday=ds===td;
-    const isWE=dow===0||dow===6;
-    const showLabel=ganttRange<=30||(ganttRange<=90&&d.getDate()%3===1)||(d.getDate()===1||d.getDate()===15);
-    return`<div class="gantt-day-col${isToday?' today':''}" style="width:${COL_W}px;min-width:${COL_W}px">
-      ${showLabel?`<div class="gantt-day-name" style="${isWE?'color:#EF4444':''}">${dayKR[dow]}</div>`:'<div class="gantt-day-name"></div>'}
-      <div class="gantt-day-num" style="${isWE?'color:#EF4444':isToday?'color:#2563EB':''}">${ganttRange<=90?d.getDate():d.getDate()===1?`${d.getMonth()+1}월`:''}</div>
+    const d=new Date(ds+'T00:00:00');const dow=d.getDay();
+    const isToday=ds===td;const isWE=dow===0||dow===6;
+    const holiH=getHoliday(ds);
+    const showDow=ganttRange<=30;
+    const showNum=ganttRange<=30||(ganttRange<=90&&d.getDate()%2===1)||d.getDate()===1||(ganttRange>90&&d.getDate()%5===1);
+    const numLabel=ganttRange<=90?d.getDate():(d.getDate()===1?`${d.getMonth()+1}월`:'');
+    return`<div class="gantt-day-col${isToday?' today':''}" style="width:${COL_W}px;min-width:${COL_W}px${holiH?';background:#FFF0F0':''}">
+      ${showDow?`<div class="gantt-day-name" style="${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':''}">${holiH?'●':dayKR[dow]}</div>`:''}
+      ${showNum?`<div class="gantt-day-num" style="font-size:${ganttRange<=30?'11px':'10px'};${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':isToday?'color:#2563EB':''}">${numLabel}</div>`:''}
     </div>`;
   }).join('');
 
-  // All projects overlapping range (no member filter)
   const allProjs=S.projects.filter(p=>p.start<=endStr&&p.end>=startStr);
 
   const memberRows=S.members.map((m,mi)=>{
@@ -883,28 +1002,29 @@ function rGantt(){
     const cells=days.map(ds=>{
       const d=new Date(ds+'T00:00:00');const dow=d.getDay();
       const isToday=ds===td;const isWE=dow===0||dow===6;
-      return`<div class="gantt-cell${isToday?' today':''}${isWE?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px" ondblclick="openGanttAdd('${m.id}','${ds}')"></div>`;
+      const holiCell=getHoliday(ds);
+      return`<div class="gantt-cell${isToday?' today':''}${isWE||holiCell?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px${holiCell?';background:#FFF0F0':''}" ondblclick="openGanttAdd('${m.id}','${ds}')"></div>`;
     }).join('');
 
+    const BAR_H=26, BAR_GAP=4, PAD=10;
     const bars=memberProjs.map((p,pi)=>{
       const ps=p.start<startStr?startStr:p.start;
       const pe=p.end>endStr?endStr:p.end;
-      const startIdx=days.indexOf(ps);
-      const endIdx=days.indexOf(pe);
-      if(startIdx<0||endIdx<0)return'';
-      const left=startIdx*COL_W+2;
-      const width=Math.max((endIdx-startIdx+1)*COL_W-4,COL_W-4);
-      const top=4+pi*34;
+      const si=days.indexOf(ps),ei=days.indexOf(pe);
+      if(si<0||ei<0)return'';
+      const left=si*COL_W+2;
+      const width=Math.max((ei-si+1)*COL_W-4,COL_W-4);
+      const top=PAD+pi*(BAR_H+BAR_GAP);
       const dday=Math.ceil((new Date(p.end)-new Date(td))/(1000*60*60*24));
       const ddayStr=dday<0?`D+${Math.abs(dday)}`:dday===0?'D-Day':`D-${dday}`;
-      return`<div class="gantt-bar" style="left:${left}px;width:${width}px;background:${p.color}22;color:${p.color};border:1.5px solid ${p.color};top:${top}px" 
-        title="${p.name} (${p.start}~${p.end})" onclick="openEditProjModal('${p.id}')">
-        ${width>60?`<span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${p.name}</span>`:''}
-        ${width>90?`<span style="font-size:10px;opacity:.7;flex-shrink:0">${ddayStr}</span>`:''}
+      return`<div class="gantt-bar2" style="left:${left}px;width:${width}px;background:${p.color};color:#fff;top:${top}px;transform:none;position:absolute;height:${BAR_H}px"
+        onclick="openProjDetail('${p.id}')" title="${p.name}">
+        ${width>50?`<span style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-size:11px">${p.name}</span>`:''}
+        ${width>100?`<span style="font-size:10px;opacity:.85;flex-shrink:0">${ddayStr}</span>`:''}
       </div>`;
     });
 
-    const rowH=Math.max(52,memberProjs.length*34+12);
+    const rowH=memberProjs.length===0 ? BAR_H+PAD*2 : PAD + memberProjs.length*BAR_H + (memberProjs.length-1)*BAR_GAP + PAD;
     const photoSrc=S.memberPhotos&&S.memberPhotos[m.id];
 
     return{
@@ -912,29 +1032,27 @@ function rGantt(){
         <div class="gantt-member-avatar" style="background:${c.bg};color:${c.t}">
           ${photoSrc?`<img src="${photoSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${m.name.slice(0,2)}`}
         </div>
-        <div class="gantt-member-name">${m.name}</div>
-        <div style="font-size:10px;color:var(--text-2);margin-left:auto">${memberProjs.length}개</div>
+        <div>
+          <div class="gantt-member-name">${m.name}</div>
+          <div style="font-size:10px;color:var(--text-3)">${memberProjs.length}개</div>
+        </div>
       </div>`,
       rowHTML:`<div class="gantt-row" style="height:${rowH}px;position:relative">
-        ${cells}
-        ${bars.join('')}
+        ${cells}${bars.join('')}
       </div>`
     };
   });
 
-  // Unassigned projects row
   const unassignedProjs=allProjs.filter(p=>!p.members||p.members.length===0);
-  let unassignedMember='', unassignedRow='';
-  if(unassignedProjs.length>0){
+  let unassignedMember='',unassignedRow='';
+  if(unassignedProjs.length){
     const ubars=unassignedProjs.map((p,pi)=>{
-      const ps=p.start<startStr?startStr:p.start;
-      const pe=p.end>endStr?endStr:p.end;
-      const si=days.indexOf(ps),ei=days.indexOf(pe);
-      if(si<0||ei<0)return'';
-      const left=si*COL_W+2,width=Math.max((ei-si+1)*COL_W-4,COL_W-4),top=4+pi*34;
-      return`<div class="gantt-bar" style="left:${left}px;width:${width}px;background:${p.color}22;color:${p.color};border:1.5px solid ${p.color};top:${top}px;opacity:.6" 
-        onclick="openEditProjModal('${p.id}')" title="${p.name}">
-        ${width>60?`<span>${p.name}</span>`:''}
+      const ps=p.start<startStr?startStr:p.start;const pe=p.end>endStr?endStr:p.end;
+      const si=days.indexOf(ps),ei=days.indexOf(pe);if(si<0||ei<0)return'';
+      const left=si*COL_W+2,width=Math.max((ei-si+1)*COL_W-4,COL_W-4),top=8+pi*34;
+      return`<div class="gantt-bar2" style="left:${left}px;width:${width}px;background:${p.color};color:#fff;top:${top}px;transform:none;position:absolute;height:28px;opacity:.6"
+        onclick="openProjDetail('${p.id}')" title="${p.name}">
+        ${width>50?`<span style="font-size:11px;font-weight:600">${p.name}</span>`:''}
       </div>`;
     });
     const rowH=Math.max(52,unassignedProjs.length*34+12);
@@ -942,17 +1060,18 @@ function rGantt(){
       const d=new Date(ds+'T00:00:00');const dow=d.getDay();
       return`<div class="gantt-cell${ds===td?' today':''}${dow===0||dow===6?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px"></div>`;
     }).join('');
-    unassignedMember=`<div class="gantt-member-row" style="height:${rowH}px;opacity:.7">
-      <div class="gantt-member-avatar" style="background:#ccc;color:#666;font-size:10px">미배정</div>
-      <div class="gantt-member-name" style="color:var(--text-2)">미배정 프로젝트</div>
+    unassignedMember=`<div class="gantt-member-row" style="height:${rowH}px;opacity:.6">
+      <div class="gantt-member-avatar" style="background:#ddd;color:#888;font-size:10px">미배정</div>
+      <div><div class="gantt-member-name" style="color:var(--text-2)">미배정</div></div>
     </div>`;
     unassignedRow=`<div class="gantt-row" style="height:${rowH}px;position:relative">${ucells}${ubars.join('')}</div>`;
   }
 
-  const membersHTML=memberRows.map(r=>r.memberHTML).join('')+unassignedMember;
+  const membersHTML=`<div class="gantt-member-row" style="height:20px;border-bottom:1px solid var(--border-light)"></div>`+memberRows.map(r=>r.memberHTML).join('')+unassignedMember;
   const rowsHTML=memberRows.map(r=>r.rowHTML).join('')+unassignedRow;
 
   el.innerHTML=`
+    ${buildAiPanel()}
     <div class="gantt-toolbar">
       <div style="display:flex;align-items:center;gap:8px">
         <button class="gantt-nav-btn" onclick="ganttOffset-=ganttRange;rGantt()">‹</button>
@@ -964,6 +1083,7 @@ function rGantt(){
         <button class="gantt-range-btn${ganttRange===30?' on':''}" onclick="ganttRange=30;rGantt()">1개월</button>
         <button class="gantt-range-btn${ganttRange===90?' on':''}" onclick="ganttRange=90;rGantt()">3개월</button>
         <button class="gantt-range-btn${ganttRange===150?' on':''}" onclick="ganttRange=150;rGantt()">5개월</button>
+        <button class="gantt-range-btn${ganttRange===365?' on':''}" onclick="ganttRange=365;rGantt()">12개월</button>
         <button class="gantt-range-btn" style="background:var(--accent);color:#fff;border-color:var(--accent)" onclick="openAddProjModal()">+ 프로젝트 추가</button>
       </div>
     </div>
@@ -978,7 +1098,6 @@ function rGantt(){
       </div>
     </div>`;
 
-  // Scroll to today
   setTimeout(()=>{
     const sc=document.getElementById('gantt-chart-scroll');
     if(sc&&ganttOffset===0){
@@ -994,13 +1113,12 @@ function openGanttAdd(mid,ds){
 }
 
 function openAddProjModal(presetMid,presetDate){
-  // reuse existing addProj modal logic
-  const catRows=S.categories.map(cat=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px"><input type="checkbox" name="pc" value="${cat.id}"><div style="width:9px;height:9px;border-radius:50%;background:${cat.hx};flex-shrink:0"></div> ${cat.l}</label>`).join('');
-  const memberRows=S.members.map(m=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px"><input type="checkbox" name="pm" value="${m.id}"${presetMid===m.id?' checked':''}> ${m.name}</label>`).join('');
+  const catRows=S.categories.map(cat=>`<label class="mc-row"><input type="checkbox" name="pc" value="${cat.id}"><div class="cdot" style="background:${cat.hx};width:9px;height:9px;flex-shrink:0"></div><span style="font-size:12px">${cat.l}</span></label>`).join('');
+  const memberRows=S.members.map(m=>`<label class="mc-row"><input type="checkbox" name="pm" value="${m.id}"${presetMid&&presetMid===m.id?' checked':''}>${avHTML(m,22,9)}<span style="font-size:12px">${m.name}</span></label>`).join('');
   const swatches=PROJ_COLORS.map((c,i)=>`<div class="cp-swatch${i===0?' on':''}" style="background:${c}" data-color="${c}" onclick="pickColor(this)"></div>`).join('')+`<input type="color" class="cp-custom" title="직접 선택" value="#378ADD" oninput="pickColorCustom(this)">`;
   const startVal=presetDate||today();
   const endVal=(()=>{const d=new Date(startVal+'T00:00:00');d.setDate(d.getDate()+30);return d.toISOString().slice(0,10)})();
-  document.getElementById('mc').innerHTML=`<div class="modal-ov" onclick="if(event.target===this)closeM()"><div class="modal"><div class="modal-title">프로젝트 추가</div>
+  document.getElementById('mc').innerHTML=`<div class="modal-ov" onclick="if(event.target===this)closeM()"><div class="modal" style="width:400px"><div class="modal-title">프로젝트 추가</div>
     <div class="modal-field"><label>프로젝트명</label><input id="pn" placeholder="프로젝트 이름"></div>
     <div class="modal-field"><label>색상</label><div class="color-picker" id="cp">${swatches}</div></div>
     <div class="modal-field"><label>시작일</label><input id="ps" type="date" value="${startVal}"></div>
@@ -1023,10 +1141,10 @@ function addProjFromGantt(){
 
 function openEditProjModal(pid){
   const p=S.projects.find(x=>x.id===pid);if(!p)return;
-  const catRows=S.categories.map(cat=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px"><input type="checkbox" name="pc" value="${cat.id}"${p.categories&&p.categories.includes(cat.id)?' checked':''}><div style="width:9px;height:9px;border-radius:50%;background:${cat.hx};flex-shrink:0"></div> ${cat.l}</label>`).join('');
-  const memberRows=S.members.map(m=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px"><input type="checkbox" name="pm" value="${m.id}"${p.members&&p.members.includes(m.id)?' checked':''}> ${m.name}</label>`).join('');
+  const catRows=S.categories.map(cat=>`<label class="mc-row"><input type="checkbox" name="pc" value="${cat.id}"${p.categories&&p.categories.includes(cat.id)?' checked':''}><div class="cdot" style="background:${cat.hx};width:9px;height:9px;flex-shrink:0"></div><span style="font-size:12px">${cat.l}</span></label>`).join('');
+  const memberRows=S.members.map(m=>`<label class="mc-row"><input type="checkbox" name="pm" value="${m.id}"${p.members&&p.members.includes(m.id)?' checked':''}>${avHTML(m,22,9)}<span style="font-size:12px">${m.name}</span></label>`).join('');
   const swatches=PROJ_COLORS.map((c,i)=>`<div class="cp-swatch${c===p.color?' on':''}" style="background:${c}" data-color="${c}" onclick="pickColor(this)"></div>`).join('')+`<input type="color" class="cp-custom" title="직접 선택" value="${p.color}" oninput="pickColorCustom(this)">`;
-  document.getElementById('mc').innerHTML=`<div class="modal-ov" onclick="if(event.target===this)closeM()"><div class="modal"><div class="modal-title">프로젝트 수정</div>
+  document.getElementById('mc').innerHTML=`<div class="modal-ov" onclick="if(event.target===this)closeM()"><div class="modal" style="width:400px"><div class="modal-title">프로젝트 수정</div>
     <div class="modal-field"><label>프로젝트명</label><input id="pn" value="${p.name}"></div>
     <div class="modal-field"><label>색상</label><div class="color-picker" id="cp">${swatches}</div></div>
     <div class="modal-field"><label>시작일</label><input id="ps" type="date" value="${p.start}"></div>
@@ -1075,12 +1193,180 @@ function memberFilterHTML(){
 /* ── ANNUAL ── */
 function rAnnual(){
   const el=document.getElementById('va');
-  // sync topbar toggle state
   document.getElementById('vt-year')?.classList.toggle('on',S.annualMode==='year');
   document.getElementById('vt-month')?.classList.toggle('on',S.annualMode==='month');
-  const toggleHTML=''; // moved to topbar
-  if(S.annualMode==='year') rYearly(el,toggleHTML);
-  else rMonthly(el,toggleHTML);
+  if(S.annualMode==='year'){
+    rGanttInto(el);
+  } else {
+    rMonthly(el,'');
+  }
+}
+
+// Render gantt into any element (used for annual view embedding)
+function rGanttInto(el){
+  const td=today();
+  const base=new Date(td+'T00:00:00');
+  base.setDate(base.getDate()+ganttOffset);
+  const startDate=new Date(base);
+  const COL_W=ganttRange<=30?40:ganttRange<=90?26:16;
+  const BAR_H=26,PAD=9,ROW_H=BAR_H+PAD*2;
+
+  const days=[];
+  for(let i=0;i<ganttRange;i++){
+    const d=new Date(startDate);d.setDate(startDate.getDate()+i);
+    days.push(d.toISOString().slice(0,10));
+  }
+  const startStr=days[0],endStr=days[days.length-1];
+  const fmt=ds=>`${ds.slice(5,7)}/${ds.slice(8)}`;
+  const rangeLabel=`${startStr.slice(0,4)}년 ${fmt(startStr)} — ${fmt(endStr)}`;
+  const dayKR=['일','월','화','수','목','금','토'];
+
+  function getStatus(p){
+    const d=Math.ceil((new Date(p.end)-new Date(td))/86400000);
+    if(d<0)return{l:'완료',bg:'#DCFCE7',c:'#16A34A'};
+    if(d===0)return{l:'D-Day',bg:'#FEF9C3',c:'#CA8A04'};
+    if(d<=7)return{l:'마감임박',bg:'#FEE2E2',c:'#DC2626'};
+    return{l:'진행중',bg:'#DBEAFE',c:'#2563EB'};
+  }
+
+  // Flat rows
+  const rows=[];
+  S.members.forEach((m,mi)=>{
+    const projs=S.projects.filter(p=>p.start<=endStr&&p.end>=startStr&&p.members&&p.members.includes(m.id));
+    if(!projs.length) rows.push({m,mi,p:null,first:true,span:1,last:true});
+    else projs.forEach((p,pi)=>rows.push({m,mi,p,first:pi===0,span:projs.length,last:pi===projs.length-1}));
+  });
+
+  // Header
+  const thCols=days.map(ds=>{
+    const d=new Date(ds+'T00:00:00'),dow=d.getDay();
+    const isToday=ds===td,holi=getHoliday(ds);
+    const showDow=ganttRange<=30;
+    const showNum=ganttRange<=30||(ganttRange<=90&&d.getDate()%2===1)||d.getDate()===1||(ganttRange>90&&d.getDate()%5===1);
+    return`<th style="width:${COL_W}px;min-width:${COL_W}px;height:48px;padding:2px 0;text-align:center;vertical-align:middle;border-right:1px solid var(--border-light);border-bottom:2px solid var(--border-light);background:${holi?'#FFF0F0':isToday?'#EFF6FF':'var(--bg-hover)'};font-weight:400">
+      ${showDow?`<div style="font-size:9px;color:${holi||dow===0?'#EF4444':dow===6?'#3B82F6':'var(--text-2)'}">${dayKR[dow]}</div>`:''}
+      ${showNum?`<div style="font-size:10px;font-weight:600;color:${holi||dow===0?'#EF4444':dow===6?'#3B82F6':isToday?'#2563EB':'var(--text)'}">${ganttRange<=90?d.getDate():d.getDate()===1?`${d.getMonth()+1}월`:''}</div>`:''}
+    </th>`;
+  }).join('');
+
+  // Body
+  const bodyRows=rows.map(({m,mi,p,first,span,last})=>{
+    const c=ac(mi);
+    const photoSrc=S.memberPhotos&&S.memberPhotos[m.id];
+    const bb=last?'2px':'1px';
+
+    const memberTd=first?`<td rowspan="${span}" style="width:90px;min-width:90px;padding:0 8px;border-right:1px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:var(--bg);position:sticky;left:0;z-index:2;vertical-align:middle">
+      <div style="display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden">
+        ${photoSrc?`<img src="${photoSrc}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0">`:
+          `<div style="width:24px;height:24px;border-radius:50%;background:${c.bg};color:${c.t};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">${m.name.slice(0,2)}</div>`}
+        <span style="font-size:12px;font-weight:600">${m.name}</span>
+      </div>
+    </td>`:'';
+
+    if(!p){
+      return`<tr style="height:${ROW_H}px">${memberTd}
+        <td colspan="${days.length+2}" style="border-bottom:2px solid var(--border-light);padding:0 8px;color:var(--text-3);font-size:11px;background:var(--bg)">프로젝트 없음</td>
+      </tr>`;
+    }
+
+    const status=getStatus(p);
+    const dday=Math.ceil((new Date(p.end)-new Date(td))/86400000);
+    const ddStr=dday<0?`D+${Math.abs(dday)}`:dday===0?'D-Day':`D-${dday}`;
+    const ps=p.start<startStr?startStr:p.start;
+    const pe=p.end>endStr?endStr:p.end;
+    const si=days.indexOf(ps),ei=days.indexOf(pe);
+
+    // Build date cells — inject bar into first in-range cell using colspan trick
+    let dateCells='';
+    if(si<0||ei<0){
+      // No bar visible in range
+      dateCells=days.map(ds=>{
+        const d=new Date(ds+'T00:00:00'),dow=d.getDay(),holi=getHoliday(ds);
+        return`<td style="width:${COL_W}px;border-right:1px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:${holi?'#FFF0F050':dow===0||dow===6?'rgba(0,0,0,.025)':ds===td?'#EFF6FF40':''}"></td>`;
+      }).join('');
+    } else {
+      // Before bar
+      for(let i=0;i<si;i++){
+        const ds=days[i],d=new Date(ds+'T00:00:00'),dow=d.getDay(),holi=getHoliday(ds);
+        dateCells+=`<td style="width:${COL_W}px;border-right:1px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:${holi?'#FFF0F050':dow===0||dow===6?'rgba(0,0,0,.025)':ds===td?'#EFF6FF40':''}"></td>`;
+      }
+      // Bar cell (colspan)
+      const barCols=ei-si+1;
+      const barW=barCols*COL_W-4;
+      dateCells+=`<td colspan="${barCols}" style="padding:${PAD}px 2px;border-right:1px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:${days[si]===td?'#EFF6FF40':''}">
+        <div style="height:${BAR_H}px;background:${p.color}22;color:${p.color};border-left:3px solid ${p.color};border-radius:0 13px 13px 0;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:600;overflow:hidden;cursor:pointer;gap:6px;box-sizing:border-box" onclick="openProjDetail('${p.id}')">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${p.name}</span>
+          ${barW>80?`<span style="font-size:10px;opacity:.7;flex-shrink:0">${ddStr}</span>`:''}
+        </div>
+      </td>`;
+      // After bar
+      for(let i=ei+1;i<days.length;i++){
+        const ds=days[i],d=new Date(ds+'T00:00:00'),dow=d.getDay(),holi=getHoliday(ds);
+        dateCells+=`<td style="width:${COL_W}px;border-right:1px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:${holi?'#FFF0F050':dow===0||dow===6?'rgba(0,0,0,.025)':ds===td?'#EFF6FF40':''}"></td>`;
+      }
+    }
+
+    return`<tr style="height:${ROW_H}px">${memberTd}
+      <td style="min-width:140px;padding:0 8px;border-right:1px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:var(--bg);position:sticky;left:90px;z-index:2;font-size:12px;cursor:pointer" onclick="openProjDetail('${p.id}')">${p.name}</td>
+      <td style="width:72px;min-width:72px;padding:4px 6px;border-right:2px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:var(--bg);position:sticky;left:230px;z-index:2;text-align:center">
+        <span style="background:${status.bg};color:${status.c};padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap">${status.l}</span>
+      </td>
+      ${dateCells}
+    </tr>`;
+  }).join('');
+
+  // Mini cals
+  const seen=new Set(),months=[];
+  days.forEach(ds=>{const mo=ds.slice(0,7);if(!seen.has(mo)){seen.add(mo);months.push(mo);}});
+  const miniCalHTML=months.slice(0,ganttRange<=30?1:ganttRange<=90?3:5).map(ym=>{
+    const[y,m]=ym.split('-').map(Number);
+    const fd=new Date(y,m-1,1).getDay(),ld=new Date(y,m,0).getDate(),dk2=['일','월','화','수','목','금','토'];
+    let cls='';for(let i=0;i<fd;i++)cls+=`<div></div>`;
+    for(let d=1;d<=ld;d++){
+      const ds=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const dow=new Date(ds+'T00:00:00').getDay(),isT=ds===td,h=getHoliday(ds);
+      cls+=`<div style="text-align:center;font-size:11px;color:${isT?'#fff':h||dow===0?'#EF4444':dow===6?'#3B82F6':'var(--text)'};background:${isT?'var(--accent)':''};border-radius:50%;width:22px;height:22px;line-height:22px;margin:auto">${d}</div>`;
+    }
+    return`<div style="background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px;min-width:200px">
+      <div style="font-size:12px;font-weight:600;text-align:center;margin-bottom:8px">${y}년 ${m}월</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px">${dk2.map((d,i)=>`<div style="text-align:center;font-size:10px;font-weight:500;color:${i===0?'#EF4444':i===6?'#3B82F6':'var(--text-2)'}">${d}</div>`).join('')}</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">${cls}</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML=`
+    ${buildAiPanel()}
+    <div class="gantt-toolbar">
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="gantt-nav-btn" onclick="ganttOffset-=ganttRange;rAnnual()">‹</button>
+        <button class="gantt-nav-btn" onclick="ganttOffset=0;rAnnual()">오늘</button>
+        <button class="gantt-nav-btn" onclick="ganttOffset+=ganttRange;rAnnual()">›</button>
+        <span style="font-size:13px;font-weight:600;color:var(--text);margin-left:4px">${rangeLabel}</span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="gantt-range-btn${ganttRange===30?' on':''}" onclick="ganttRange=30;rAnnual()">1개월</button>
+        <button class="gantt-range-btn${ganttRange===90?' on':''}" onclick="ganttRange=90;rAnnual()">3개월</button>
+        <button class="gantt-range-btn${ganttRange===150?' on':''}" onclick="ganttRange=150;rAnnual()">5개월</button>
+        <button class="gantt-range-btn" style="background:var(--accent);color:#fff;border-color:var(--accent)" onclick="openAddProjModal()">+ 프로젝트 추가</button>
+      </div>
+    </div>
+    <div style="flex:1;overflow:auto">
+      <table style="border-collapse:collapse;width:max-content">
+        <thead><tr>
+          <th style="width:90px;min-width:90px;height:48px;padding:0 8px;border-right:1px solid var(--border-light);border-bottom:2px solid var(--border-light);background:var(--bg-hover);text-align:left;font-size:11px;font-weight:600;color:var(--text-2);position:sticky;left:0;z-index:5">담당자</th>
+          <th style="min-width:140px;height:48px;padding:0 8px;border-right:1px solid var(--border-light);border-bottom:2px solid var(--border-light);background:var(--bg-hover);text-align:left;font-size:11px;font-weight:600;color:var(--text-2);position:sticky;left:90px;z-index:5">작품명</th>
+          <th style="width:72px;min-width:72px;height:48px;padding:0 6px;border-right:2px solid var(--border-light);border-bottom:2px solid var(--border-light);background:var(--bg-hover);text-align:center;font-size:11px;font-weight:600;color:var(--text-2);position:sticky;left:230px;z-index:5">진행여부</th>
+          ${thCols}
+        </tr></thead>
+        <tbody>${bodyRows}</tbody>
+      </table>
+    </div>
+    <div style="display:flex;gap:12px;padding:16px;overflow-x:auto;border-top:1px solid var(--border-light);flex-wrap:wrap">${miniCalHTML}</div>`;
+
+  setTimeout(()=>{
+    const wrap=el.querySelector('div[style*="overflow:auto"]');
+    if(wrap&&ganttOffset===0){const ti=days.indexOf(td);if(ti>3)wrap.scrollLeft=(ti-3)*COL_W;}
+  },50);
 }
 
 function rYearly(el,toggleHTML){
@@ -1303,64 +1589,90 @@ function rMonthly(el,toggleHTML){
   const m=S.selMonth,y=S.year,td=today();
   const days=dim(y,m),fd=fdm(y,m);
   const filterIds=getFilterIds();
+  const dayKR=['일','월','화','수','목','금','토'];
+
+  // Build calendar cells
   let cells='';
-  for(let i=0;i<fd;i++) cells+=`<div class="mdc empty"></div>`;
+  // Prev month filler
+  const prevDays=dim(y,m===0?11:m-1);
+  for(let i=0;i<fd;i++){
+    const pd=prevDays-fd+i+1;
+    cells+=`<div class="gcal-cell other-month">
+      <div class="gcal-date other">${pd}</div>
+    </div>`;
+  }
+
   for(let d=1;d<=days;d++){
     const ds=dk(y,m,d);
     const ws=filterIds?filterIds.flatMap(mid=>gw(ds,mid)):gaw(ds);
     const projs=projsOnDate(ds,filterIds);
-    const isTod=ds===td?' tod':'';
-    const projBars=projs.map(p=>`<div class="mdc-proj-bar" style="background:${p.color}20;color:${p.color};border-left:2px solid ${p.color}">${p.name}</div>`).join('');
-    const workDots=ws.map(w=>{const cat=gc(w.catId);return`<div class="dd" style="background:${cat.hx};width:5px;height:5px;border-radius:50%"></div>`}).join('');
-    cells+=`<div class="mdc${isTod}" onclick="gotoDate('${ds}')">
-      <div class="mdc-num">${d}</div>${projBars}
-      ${workDots?`<div class="mdc-work-dots">${workDots}</div>`:''}
+    const isTod=ds===td;
+    const dow=new Date(ds+'T00:00:00').getDay();
+    const isWE=dow===0||dow===6;
+    const holi=getHoliday(ds);
+    const isFirstOfMonth=d===1;
+
+    // Project bars (show as full-width colored bars like google cal)
+    const projBars=projs.map(p=>{
+      return`<div class="gcal-event-bar" style="background:${p.color}22;color:${p.color};border-left:3px solid ${p.color}" onclick="event.stopPropagation();openProjDetail('${p.id}')" title="${p.name}">
+        <span>${p.name}</span>
+      </div>`;
+    }).join('');
+
+    // Work items as dots with text
+    const workItems=ws.slice(0,3).map(w=>{
+      const cat=gc(w.catId);
+      return`<div class="gcal-work-item" onclick="event.stopPropagation();openDayPop('${w.memberId||''}','${ds}',event)">
+        <div class="gcal-work-dot" style="background:${cat.hx}"></div>
+        <span>${w.text||''}</span>
+      </div>`;
+    }).join('');
+    const moreCount=Math.max(0,ws.length-3);
+
+    const dateStyle=isTod?'background:var(--accent);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;'
+      :holi||dow===0?'color:#EF4444'
+      :dow===6?'color:#3B82F6'
+      :'';
+
+    cells+=`<div class="gcal-cell${isTod?' today':''}${isWE?' weekend':''}${holi?' holiday':''}" onclick="gotoDate('${ds}')">
+      <div class="gcal-date-row">
+        <span class="gcal-date-num" style="${dateStyle}">${isFirstOfMonth&&d>1?`${m+1}월 ${d}일`:d}</span>
+        ${holi?`<span class="gcal-holi-label">${holi}</span>`:''}
+      </div>
+      ${projBars}
+      ${workItems}
+      ${moreCount>0?`<div class="gcal-more">+${moreCount}개 더보기</div>`:''}
     </div>`;
   }
+
   const remain=(7-(fd+days)%7)%7;
-  for(let i=0;i<remain;i++) cells+=`<div class="mdc empty"></div>`;
-  const ganttHTML=rGanttMonth(y,m,filterIds);
-  let mWorks=[];const activeDays=new Set();
-  for(let d=1;d<=days;d++){
-    const ds=dk(y,m,d);
-    const ws=filterIds?filterIds.flatMap(mid=>gw(ds,mid)):gaw(ds);
-    mWorks.push(...ws);if(ws.length)activeDays.add(ds);
+  for(let i=0;i<remain;i++){
+    cells+=`<div class="gcal-cell other-month"><div class="gcal-date other">${i+1}</div></div>`;
   }
-  const activeProjs=projsInMonth(y,m,filterIds);
-  const projLegend=activeProjs.map(p=>{
-    const s=p.start>dk(y,m,1)?p.start:dk(y,m,1);
-    const e=p.end<dk(y,m,days)?p.end:dk(y,m,days);
-    return`<div class="pl-item"><div class="pl-dot" style="background:${p.color}"></div><span class="pl-name">${p.name}</span><span class="pl-dur">${s.slice(5)}~${e.slice(5)}</span></div>`;
-  }).join('')||`<div style="font-size:11px;color:var(--text-3)">없음</div>`;
-  el.innerHTML=`<div class="annual-wrap">
-    <div class="annual-header" style="margin-bottom:14px">
-      <div class="monthly-header">
-        <button class="mo-nav" onclick="shiftMonth(-1)">← 이전</button>
-        <span class="mo-title">${y}년 ${MONTHS[m]}</span>
-        <button class="mo-nav" onclick="shiftMonth(1)">다음 →</button>
+
+  const monthLabel=`${y}년 ${MONTHS[m]}`;
+
+  el.innerHTML=`<div class="gcal-wrap">
+    <div class="gcal-toolbar">
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="gcal-nav-btn" onclick="shiftMonth(-1)">‹</button>
+        <button class="gcal-today-btn" onclick="S.selMonth=new Date().getMonth();S.year=new Date().getFullYear();rAnnual()">오늘</button>
+        <button class="gcal-nav-btn" onclick="shiftMonth(1)">›</button>
+        <span class="gcal-month-label">${monthLabel}</span>
       </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${memberFilterHTML()}${toggleHTML}</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        ${memberFilterHTML()}
+        ${toggleHTML}
+      </div>
     </div>
     ${buildAiPanel()}
-    <div class="month-cal-wrap">
-      <div>
-        <div class="month-cal">
-          <div class="mcal-head">${DAYS.map(l=>`<div class="mcal-dl">${l}</div>`).join('')}</div>
-          <div class="mcal-grid">${cells}</div>
-        </div>
-
+    <div class="gcal-body">
+      <div class="gcal-dow-header">
+        ${['일','월','화','수','목','금','토'].map((d,i)=>`<div class="gcal-dow${i===0?' sun':i===6?' sat':''}">${d}</div>`).join('')}
       </div>
-      <div class="mo-detail">
-        <div class="mo-det-title">${MONTHS[m]} 요약</div>
-        <div class="mo-stat-grid">
-          <div class="mo-stat"><div class="mo-stat-l">총 업무</div><div class="mo-stat-v">${mWorks.length}</div></div>
-          <div class="mo-stat"><div class="mo-stat-l">활동일</div><div class="mo-stat-v">${activeDays.size}</div></div>
-          <div class="mo-stat"><div class="mo-stat-l">프로젝트</div><div class="mo-stat-v">${activeProjs.length}</div></div>
-        </div>
-        <div class="mo-det-title" style="margin-bottom:8px">이달 프로젝트</div>
-        <div>${projLegend}</div>
-      </div>
-    </div></div>`;
+      <div class="gcal-grid">${cells}</div>
+    </div>
+  </div>`;
 }
 
 function rGanttMonth(y,m,filterIds){
@@ -1633,6 +1945,201 @@ function showAddProj(){
   setTimeout(()=>document.getElementById('pn').focus(),50);
 }
 function showEditProj(id){
+  openProjDetail(id);
+}
+
+function buildProjMiniCal(p){
+  const td=today();
+  const dk=['일','월','화','수','목','금','토'];
+  const months=[];
+  let cur=new Date(p.start.slice(0,4),parseInt(p.start.slice(5,7))-1,1);
+  const endMo=new Date(p.end.slice(0,4),parseInt(p.end.slice(5,7))-1,1);
+  while(cur<=endMo){months.push(new Date(cur));cur=new Date(cur.getFullYear(),cur.getMonth()+1,1);}
+  return months.map(mo=>{
+    const y=mo.getFullYear(),m=mo.getMonth();
+    const fd=new Date(y,m,1).getDay(),ld=new Date(y,m+1,0).getDate();
+    let cells='';
+    for(let i=0;i<fd;i++) cells+='<div></div>';
+    for(let d=1;d<=ld;d++){
+      const ds=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+      const dow=new Date(ds+'T00:00:00').getDay();
+      const inRange=ds>=p.start&&ds<=p.end;
+      const isStart=ds===p.start,isEnd=ds===p.end,isToday=ds===td;
+      const holi=getHoliday(ds);
+      const bg=isStart||isEnd?p.color:inRange?p.color+'22':'transparent';
+      const col=isStart||isEnd?'#fff':holi||dow===0?'#EF4444':dow===6?'#3B82F6':inRange?p.color:'var(--text)';
+      const fw=isStart||isEnd||isToday?700:400;
+      const outline=isToday&&!inRange?'2px solid var(--accent)':'none';
+      cells+='<div style="text-align:center;font-size:11px;width:24px;height:24px;line-height:24px;margin:auto;border-radius:'+(isStart||isEnd?'50%':'3px')+';background:'+bg+';color:'+col+';font-weight:'+fw+';outline:'+outline+'">'+d+'</div>';
+    }
+    const header=dk.map((d,i)=>'<div style="text-align:center;font-size:9px;font-weight:500;color:'+(i===0?'#EF4444':i===6?'#3B82F6':'var(--text-2)')+'">'+d+'</div>').join('');
+    return '<div style="background:var(--bg-hover);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px;min-width:190px">'
+      +'<div style="font-size:11px;font-weight:600;color:var(--text);text-align:center;margin-bottom:6px">'+y+'년 '+(m+1)+'월</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-bottom:3px">'+header+'</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px">'+cells+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function openProjDetail(id){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  if(!p.detail)p.detail={tasks:[],memo:'',driveLink:''};
+  const d=p.detail;
+
+  // Status
+  const now=today();
+  const dday=Math.ceil((new Date(p.end)-new Date(now))/(1000*60*60*24));
+  const status=dday<0?{l:'완료',bg:'#DCFCE7',c:'#16A34A'}:dday===0?{l:'D-Day',bg:'#FEF9C3',c:'#CA8A04'}:dday<=7?{l:'마감임박',bg:'#FEE2E2',c:'#DC2626'}:{l:'진행중',bg:'#DBEAFE',c:'#2563EB'};
+
+  // Members
+  const memberAvatars=S.members.filter(m=>p.members.includes(m.id)).map((m,i)=>{const c=ac(i);return`<span style="display:inline-flex;align-items:center;gap:5px;background:${c.bg};color:${c.t};padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600">${avHTML(m,18,i)}${m.name}</span>`;}).join('');
+
+  // Categories
+  const catBadges=(p.categories||[]).map(cid=>{const c=S.categories.find(x=>x.id===cid);return c?`<span style="background:${c.hx}22;color:${c.hx};border:1px solid ${c.hx}44;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500">${c.l}</span>`:''}).join(' ');
+
+  // Tasks
+  const taskRows=(d.tasks||[]).map((t,i)=>`
+    <div class="pd-task-row" id="pd-task-${i}">
+      <div class="pd-task-check${t.done?' done':''}" onclick="togglePdTask('${id}',${i})">
+        ${t.done?'✓':''}
+      </div>
+      <input class="pd-task-text" value="${t.text||''}" style="${t.done?'text-decoration:line-through;color:var(--text-3)':''}"
+        oninput="updatePdTask('${id}',${i},this.value)"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();addPdTask('${id}')}"
+        placeholder="할 일 입력...">
+      <input type="date" class="pd-task-date" value="${t.date||''}" style="border:none;background:none;font-size:11px;color:var(--text-3);cursor:pointer" onchange="updatePdTaskDate('${id}',${i},this.value)">
+    </div>`).join('');
+
+  const driveHTML=d.driveLink
+    ? `<a class="pd-drive-link" href="${d.driveLink}" target="_blank">📁 ${d.driveLink}</a>
+       <input class="pd-drive-input" value="${d.driveLink}" placeholder="Google Drive 링크" oninput="updatePdDrive('${id}',this.value)">`
+    : `<input class="pd-drive-input" value="" placeholder="Google Drive 링크 입력..." oninput="updatePdDrive('${id}',this.value)">`;
+
+  const overlay=document.createElement('div');
+  overlay.className='proj-detail-overlay';
+  overlay.id='proj-detail-overlay';
+  overlay.onclick=(e)=>{if(e.target===overlay)closeProjDetail();};
+  overlay.innerHTML=`
+    <div class="proj-detail-panel">
+      <div class="pd-cover" style="background:linear-gradient(135deg,${p.color}33,${p.color}11)">
+        <div style="width:52px;height:52px;border-radius:12px;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0">
+          ${p.name.slice(0,1)}
+        </div>
+      </div>
+      <div class="pd-header">
+        <button class="pd-edit-btn" onclick="closeProjDetail();setTimeout(()=>openProjEditModal('${id}'),100)">⚙ 설정</button>
+        <button class="pd-save-btn" onclick="saveProjDetail('${id}')">저장</button>
+        <button class="pd-close-btn" onclick="closeProjDetail()">✕</button>
+      </div>
+      <div class="pd-body">
+        <input class="pd-title" id="pd-title" value="${p.name}" placeholder="프로젝트 이름" oninput="autoSavePdTitle('${id}',this.value)">
+        <div class="pd-props">
+          <div class="pd-prop-row">
+            <span class="pd-prop-label">Status</span>
+            <span class="pd-status-badge" style="background:${status.bg};color:${status.c}">${status.l}</span>
+          </div>
+          <div class="pd-prop-row">
+            <span class="pd-prop-label">기간</span>
+            <span class="pd-prop-val">${p.start} ~ ${p.end} (D-${dday<0?''+Math.abs(dday):dday})</span>
+          </div>
+          <div class="pd-prop-row">
+            <span class="pd-prop-label">분류</span>
+            <span class="pd-prop-val">${catBadges||'—'}</span>
+          </div>
+          <div class="pd-prop-row">
+            <span class="pd-prop-label">담당자</span>
+            <div style="display:flex;gap:4px;align-items:center">${memberAvatars}</div>
+          </div>
+        </div>
+
+        <div class="pd-section-title">📌 드라이브 링크</div>
+        ${driveHTML}
+
+        <div class="pd-section-title">✅ 태스크</div>
+        <div class="pd-tasks" id="pd-tasks">${taskRows}</div>
+        <div class="pd-add-task" onclick="addPdTask('${id}')">+ 새 태스크 추가</div>
+
+        <div class="pd-section-title">📝 메모</div>
+        <textarea class="pd-memo" id="pd-memo" placeholder="프로젝트 관련 메모를 자유롭게 작성하세요..." oninput="autoSavePdMemo('${id}',this.value)">${d.memo||''}</textarea>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function closeProjDetail(){
+  const el=document.getElementById('proj-detail-overlay');
+  if(el)el.remove();
+}
+
+function autoSavePdTitle(id,val){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  p.name=val.trim()||p.name;
+  clearTimeout(autoSavePdTitle._t);
+  autoSavePdTitle._t=setTimeout(()=>{lsSave();rProject();showSavedIndicator();},500);
+}
+function autoSavePdMemo(id,val){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  if(!p.detail)p.detail={tasks:[],memo:'',driveLink:''};
+  p.detail.memo=val;
+  clearTimeout(autoSavePdMemo._t);
+  autoSavePdMemo._t=setTimeout(()=>{lsSave();showSavedIndicator();},500);
+}
+function showSavedIndicator(){
+  const btn=document.querySelector('.pd-save-btn');
+  if(!btn)return;
+  btn.textContent='저장됨 ✓';btn.style.background='#16A34A';
+  clearTimeout(showSavedIndicator._t);
+  showSavedIndicator._t=setTimeout(()=>{btn.textContent='저장';btn.style.background='';},1500);
+}
+function saveProjDetail(id){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  if(!p.detail)p.detail={tasks:[],memo:'',driveLink:''};
+  const titleEl=document.getElementById('pd-title');
+  const memoEl=document.getElementById('pd-memo');
+  if(titleEl)p.name=titleEl.value.trim()||p.name;
+  if(memoEl)p.detail.memo=memoEl.value;
+  lsSave();rProject();
+  // Flash save confirmation
+  const btn=document.querySelector('.pd-save-btn');
+  if(btn){btn.textContent='저장됨 ✓';btn.style.background='#16A34A';setTimeout(()=>{btn.textContent='저장';btn.style.background='';},1500);}
+}
+
+function togglePdTask(id,i){
+  const p=S.projects.find(x=>x.id===id);if(!p||!p.detail)return;
+  p.detail.tasks[i].done=!p.detail.tasks[i].done;
+  lsSave();closeProjDetail();openProjDetail(id);
+}
+
+function updatePdTask(id,i,val){
+  const p=S.projects.find(x=>x.id===id);if(!p||!p.detail)return;
+  p.detail.tasks[i].text=val;lsSave();
+}
+
+function updatePdTaskDate(id,i,val){
+  const p=S.projects.find(x=>x.id===id);if(!p||!p.detail)return;
+  p.detail.tasks[i].date=val;lsSave();
+}
+
+function addPdTask(id){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  if(!p.detail)p.detail={tasks:[],memo:'',driveLink:''};
+  p.detail.tasks.push({text:'',done:false,date:''});
+  lsSave();closeProjDetail();openProjDetail(id);
+  setTimeout(()=>{
+    const inputs=document.querySelectorAll('.pd-task-text');
+    if(inputs.length)inputs[inputs.length-1].focus();
+  },100);
+}
+
+function updatePdDrive(id,val){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  if(!p.detail)p.detail={tasks:[],memo:'',driveLink:''};
+  p.detail.driveLink=val;
+  clearTimeout(updatePdDrive._t);
+  updatePdDrive._t=setTimeout(()=>{lsSave();showSavedIndicator();},500);
+}
+
+function openProjEditModal(id){
   const p=S.projects.find(x=>x.id===id);if(!p)return;
   const memberRows=S.members.map(m=>{
     const checked=p.members.includes(m.id)?'checked':'';
@@ -1647,14 +2154,10 @@ function showEditProj(id){
     return`<div class="cp-swatch${on}" style="background:${c}" data-color="${c}" onclick="pickColor(this)"></div>`;
   }).join('');
   document.getElementById('mc').innerHTML=`<div class="modal-ov" onclick="if(event.target===this)closeM()"><div class="modal">
-    <h3>프로젝트 수정</h3>
+    <h3>프로젝트 설정</h3>
     <div class="modal-field"><label>이름</label><input id="pn" type="text" value="${p.name}"></div>
     <div class="modal-field"><label>색상</label>
       <div class="color-picker" id="cp">${swatches}</div>
-      <div style="margin-top:6px;display:flex;align-items:center;gap:6px">
-        <div style="width:14px;height:14px;border-radius:3px;background:${p.color};flex-shrink:0"></div>
-        <span style="font-size:11px;color:var(--text-2)">현재 색상</span>
-      </div>
     </div>
     <div class="modal-field"><label>시작일</label><input id="ps" type="date" value="${p.start}"></div>
     <div class="modal-field"><label>종료일</label><input id="pe" type="date" value="${p.end}"></div>
@@ -1809,12 +2312,9 @@ function delCat(cid){
 
   setTimeout(()=>{
     overlay.remove();
-    rSide();rTeam();
-    // if annual view was active, show toggle
-    if(S.view==='annual'){
-      const tog=document.getElementById('topbar-toggle');
-      if(tog) tog.style.display='flex';
-    }
+    rSide();
+    const teamTab=document.querySelectorAll('.tb-tab')[2];
+    sv('team', teamTab);
   },150);
 })();
 
