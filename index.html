@@ -1064,6 +1064,7 @@ function rGantt(){
     <div class="gantt-wrap">
       <div class="gantt-members">
         <div class="gantt-member-header">팀원 (${S.members.length}명)</div>
+        <div class="gantt-member-row" style="height:20px;border-bottom:1px solid var(--border-light)"></div>
         ${membersHTML}
       </div>
       <div class="gantt-chart" id="gantt-chart-scroll">
@@ -1289,6 +1290,7 @@ function rGanttInto(el){
     <div class="gantt-wrap">
       <div class="gantt-members">
         <div class="gantt-member-header">팀원 (${S.members.length}명)</div>
+        <div class="gantt-member-row" style="height:20px;border-bottom:1px solid var(--border-light)"></div>
         ${memberRows.map(r=>r.mh).join('')}
       </div>
       <div class="gantt-chart" id="gantt-chart-annual">
@@ -1550,7 +1552,7 @@ function rMonthly(el,toggleHTML){
 
     // Project bars (show as full-width colored bars like google cal)
     const projBars=projs.map(p=>{
-      return`<div class="gcal-event-bar" style="background:${p.color};color:#fff" onclick="event.stopPropagation();openProjDetail('${p.id}')" title="${p.name}">
+      return`<div class="gcal-event-bar" style="background:${p.color}22;color:${p.color};border-left:3px solid ${p.color}" onclick="event.stopPropagation();openProjDetail('${p.id}')" title="${p.name}">
         <span>${p.name}</span>
       </div>`;
     }).join('');
