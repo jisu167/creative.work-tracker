@@ -348,7 +348,7 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
 .gantt-wrap{display:flex;flex:1;overflow:hidden;border-top:2px solid var(--border-light);margin-top:4px}
 .gantt-members{width:180px;flex-shrink:0;border-right:1px solid var(--border-light);overflow-y:auto;background:var(--bg)}
 .gantt-member-header{height:48px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;padding:0 12px;font-size:11px;font-weight:600;color:var(--text-2);background:var(--bg-hover)}
-.gantt-member-row{height:52px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;padding:0 12px;gap:8px;font-size:13px;color:var(--text);cursor:pointer}
+.gantt-member-row{border-bottom:1px solid var(--border-light);display:flex;align-items:center;padding:0 12px;gap:8px;font-size:13px;color:var(--text);cursor:pointer}
 .gantt-member-row:first-child{border-top:2px solid var(--border-light)}
 .gantt-member-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
 .gantt-member-avatar img{width:100%;height:100%;object-fit:cover}
@@ -361,7 +361,7 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
 .gantt-day-num{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap}
 .gantt-day-col.today .gantt-day-num{color:#2563EB}
 .gantt-rows{min-width:max-content}
-.gantt-row{height:52px;display:flex;position:relative;border-bottom:1px solid var(--border-light)}
+.gantt-row{display:flex;position:relative;border-bottom:1px solid var(--border-light);overflow:hidden}
 .gantt-rows>.gantt-row:first-child{margin-top:0}
 .gantt-cell{flex-shrink:0;border-right:1px solid var(--border-light);height:100%}
 .gantt-cell.today{background:#EFF6FF20}
@@ -373,6 +373,22 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
 .gantt-nav-btn{width:28px;height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
 
 
+
+/* ── GANTT2 PROJECT-BASED LAYOUT ── */
+.gantt2-wrap{flex:1;overflow:auto;display:flex;flex-direction:column}
+.gantt2-table{width:100%;border-collapse:collapse;min-width:max-content}
+.gantt2-label-th{width:220px;min-width:220px;padding:10px 16px;font-size:11px;font-weight:600;color:var(--text-2);background:var(--bg-hover);border-bottom:2px solid var(--border-light);position:sticky;left:0;z-index:5;text-align:left}
+.gantt2-dates-th{padding:0;background:var(--bg-hover);border-bottom:2px solid var(--border-light);overflow-x:auto;white-space:nowrap}
+.gantt2-cat-row td{background:var(--bg);border-bottom:1px solid var(--border-light)}
+.gantt2-row{cursor:pointer;transition:background .1s}
+.gantt2-row:hover .gantt2-label-cell{background:var(--bg-hover)}
+.gantt2-row:hover .gantt2-bar-cell{background:#F8FAFF}
+.gantt2-label-cell{width:220px;min-width:220px;padding:8px 16px;border-bottom:1px solid var(--border-light);border-right:1px solid var(--border-light);background:var(--bg);position:sticky;left:0;z-index:2;vertical-align:middle}
+.gantt2-proj-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.gantt2-proj-dates{font-size:11px;color:var(--text-3);margin-top:2px}
+.gantt2-bar-cell{padding:0;border-bottom:1px solid var(--border-light);vertical-align:middle;height:48px}
+.gantt-bar2{position:absolute;top:50%;transform:translateY(-50%);height:28px;border-radius:14px;display:flex;align-items:center;padding:0 10px;cursor:pointer;z-index:2;transition:opacity .15s;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.gantt-bar2:hover{opacity:.88;filter:brightness(1.05)}
 /* ── GOOGLE CALENDAR STYLE MONTHLY VIEW ── */
 .gcal-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden}
 .gcal-toolbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border-light);flex-shrink:0;gap:12px;flex-wrap:wrap}
@@ -406,6 +422,20 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
 .gcal-work-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .gcal-more{font-size:10px;color:var(--accent);cursor:pointer;padding:1px 4px;font-weight:500}
 .gcal-more:hover{text-decoration:underline}
+
+/* ── GANTT SPREADSHEET STYLE (연간보기) ── */
+.gsi-label-panel{width:280px;flex-shrink:0;border-right:2px solid var(--border-light);display:flex;flex-direction:column;overflow:hidden}
+.gsi-label-header{display:flex;height:48px;border-bottom:2px solid var(--border-light);background:var(--bg-hover);flex-shrink:0}
+.gsi-label-body{flex:1;overflow-y:auto;overflow-x:hidden}
+.gsi-label-row{display:flex;align-items:center;border-bottom:1px solid var(--border-light);background:var(--bg);transition:background .1s}
+.gsi-label-row:hover{background:var(--bg-hover)}
+.gsi-col-member{width:90px;min-width:90px;padding:4px 8px;display:flex;align-items:center;gap:5px;border-right:1px solid var(--border-light);font-size:12px;font-weight:600;color:var(--text);overflow:hidden}
+.gsi-col-proj{flex:1;padding:4px 8px;font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;border-right:1px solid var(--border-light)}
+.gsi-col-proj:hover{color:var(--accent)}
+.gsi-col-status{width:70px;min-width:70px;padding:4px 6px;display:flex;align-items:center;justify-content:center}
+.gsi-label-header .gsi-col-member{font-size:11px;font-weight:600;color:var(--text-2)}
+.gsi-label-header .gsi-col-proj{font-size:11px;font-weight:600;color:var(--text-2)}
+.gsi-label-header .gsi-col-status{font-size:11px;font-weight:600;color:var(--text-2);text-align:center}
 /* ── PROJECT DETAIL PAGE ── */
 .proj-detail-overlay{position:fixed;inset:0;z-index:200;display:flex;justify-content:flex-end;background:rgba(0,0,0,.3);animation:fadeIn .15s}
 .proj-detail-panel{width:min(780px,95vw);height:100vh;background:var(--bg);overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,.12);display:flex;flex-direction:column;animation:slideInRight .2s}
@@ -951,10 +981,8 @@ function rGantt(){
   const dayKR=['일','월','화','수','목','금','토'];
 
   const headerCols=days.map(ds=>{
-    const d=new Date(ds+'T00:00:00');
-    const dow=d.getDay();
-    const isToday=ds===td;
-    const isWE=dow===0||dow===6;
+    const d=new Date(ds+'T00:00:00');const dow=d.getDay();
+    const isToday=ds===td;const isWE=dow===0||dow===6;
     const holiH=getHoliday(ds);
     const showDow=ganttRange<=30;
     const showNum=ganttRange<=30||(ganttRange<=90&&d.getDate()%2===1)||d.getDate()===1||(ganttRange>90&&d.getDate()%5===1);
@@ -965,7 +993,6 @@ function rGantt(){
     </div>`;
   }).join('');
 
-  // All projects overlapping range (no member filter)
   const allProjs=S.projects.filter(p=>p.start<=endStr&&p.end>=startStr);
 
   const memberRows=S.members.map((m,mi)=>{
@@ -979,25 +1006,25 @@ function rGantt(){
       return`<div class="gantt-cell${isToday?' today':''}${isWE||holiCell?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px${holiCell?';background:#FFF0F0':''}" ondblclick="openGanttAdd('${m.id}','${ds}')"></div>`;
     }).join('');
 
+    const BAR_H=26, BAR_GAP=4, PAD=10;
     const bars=memberProjs.map((p,pi)=>{
       const ps=p.start<startStr?startStr:p.start;
       const pe=p.end>endStr?endStr:p.end;
-      const startIdx=days.indexOf(ps);
-      const endIdx=days.indexOf(pe);
-      if(startIdx<0||endIdx<0)return'';
-      const left=startIdx*COL_W+2;
-      const width=Math.max((endIdx-startIdx+1)*COL_W-4,COL_W-4);
-      const top=4+pi*34;
+      const si=days.indexOf(ps),ei=days.indexOf(pe);
+      if(si<0||ei<0)return'';
+      const left=si*COL_W+2;
+      const width=Math.max((ei-si+1)*COL_W-4,COL_W-4);
+      const top=PAD+pi*(BAR_H+BAR_GAP);
       const dday=Math.ceil((new Date(p.end)-new Date(td))/(1000*60*60*24));
       const ddayStr=dday<0?`D+${Math.abs(dday)}`:dday===0?'D-Day':`D-${dday}`;
-      return`<div class="gantt-bar" style="left:${left}px;width:${width}px;background:${p.color}22;color:${p.color};border:1.5px solid ${p.color};top:${top}px" 
-        title="${p.name} (${p.start}~${p.end})" onclick="openProjDetail('${p.id}')">
-        ${width>60?`<span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${p.name}</span>`:''}
-        ${width>90?`<span style="font-size:10px;opacity:.7;flex-shrink:0">${ddayStr}</span>`:''}
+      return`<div class="gantt-bar2" style="left:${left}px;width:${width}px;background:${p.color};color:#fff;top:${top}px;transform:none;position:absolute;height:${BAR_H}px"
+        onclick="openProjDetail('${p.id}')" title="${p.name}">
+        ${width>50?`<span style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-size:11px">${p.name}</span>`:''}
+        ${width>100?`<span style="font-size:10px;opacity:.85;flex-shrink:0">${ddayStr}</span>`:''}
       </div>`;
     });
 
-    const rowH=Math.max(52,memberProjs.length*34+12);
+    const rowH=memberProjs.length===0 ? BAR_H+PAD*2 : PAD + memberProjs.length*BAR_H + (memberProjs.length-1)*BAR_GAP + PAD;
     const photoSrc=S.memberPhotos&&S.memberPhotos[m.id];
 
     return{
@@ -1005,29 +1032,27 @@ function rGantt(){
         <div class="gantt-member-avatar" style="background:${c.bg};color:${c.t}">
           ${photoSrc?`<img src="${photoSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${m.name.slice(0,2)}`}
         </div>
-        <div class="gantt-member-name">${m.name}</div>
-        <div style="font-size:10px;color:var(--text-2);margin-left:auto">${memberProjs.length}개</div>
+        <div>
+          <div class="gantt-member-name">${m.name}</div>
+          <div style="font-size:10px;color:var(--text-3)">${memberProjs.length}개</div>
+        </div>
       </div>`,
       rowHTML:`<div class="gantt-row" style="height:${rowH}px;position:relative">
-        ${cells}
-        ${bars.join('')}
+        ${cells}${bars.join('')}
       </div>`
     };
   });
 
-  // Unassigned projects row
   const unassignedProjs=allProjs.filter(p=>!p.members||p.members.length===0);
-  let unassignedMember='', unassignedRow='';
-  if(unassignedProjs.length>0){
+  let unassignedMember='',unassignedRow='';
+  if(unassignedProjs.length){
     const ubars=unassignedProjs.map((p,pi)=>{
-      const ps=p.start<startStr?startStr:p.start;
-      const pe=p.end>endStr?endStr:p.end;
-      const si=days.indexOf(ps),ei=days.indexOf(pe);
-      if(si<0||ei<0)return'';
-      const left=si*COL_W+2,width=Math.max((ei-si+1)*COL_W-4,COL_W-4),top=4+pi*34;
-      return`<div class="gantt-bar" style="left:${left}px;width:${width}px;background:${p.color}22;color:${p.color};border:1.5px solid ${p.color};top:${top}px;opacity:.6" 
+      const ps=p.start<startStr?startStr:p.start;const pe=p.end>endStr?endStr:p.end;
+      const si=days.indexOf(ps),ei=days.indexOf(pe);if(si<0||ei<0)return'';
+      const left=si*COL_W+2,width=Math.max((ei-si+1)*COL_W-4,COL_W-4),top=8+pi*34;
+      return`<div class="gantt-bar2" style="left:${left}px;width:${width}px;background:${p.color};color:#fff;top:${top}px;transform:none;position:absolute;height:28px;opacity:.6"
         onclick="openProjDetail('${p.id}')" title="${p.name}">
-        ${width>60?`<span>${p.name}</span>`:''}
+        ${width>50?`<span style="font-size:11px;font-weight:600">${p.name}</span>`:''}
       </div>`;
     });
     const rowH=Math.max(52,unassignedProjs.length*34+12);
@@ -1035,14 +1060,14 @@ function rGantt(){
       const d=new Date(ds+'T00:00:00');const dow=d.getDay();
       return`<div class="gantt-cell${ds===td?' today':''}${dow===0||dow===6?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px"></div>`;
     }).join('');
-    unassignedMember=`<div class="gantt-member-row" style="height:${rowH}px;opacity:.7">
-      <div class="gantt-member-avatar" style="background:#ccc;color:#666;font-size:10px">미배정</div>
-      <div class="gantt-member-name" style="color:var(--text-2)">미배정 프로젝트</div>
+    unassignedMember=`<div class="gantt-member-row" style="height:${rowH}px;opacity:.6">
+      <div class="gantt-member-avatar" style="background:#ddd;color:#888;font-size:10px">미배정</div>
+      <div><div class="gantt-member-name" style="color:var(--text-2)">미배정</div></div>
     </div>`;
     unassignedRow=`<div class="gantt-row" style="height:${rowH}px;position:relative">${ucells}${ubars.join('')}</div>`;
   }
 
-  const membersHTML=memberRows.map(r=>r.memberHTML).join('')+unassignedMember;
+  const membersHTML=`<div class="gantt-member-row" style="height:20px;border-bottom:1px solid var(--border-light)"></div>`+memberRows.map(r=>r.memberHTML).join('')+unassignedMember;
   const rowsHTML=memberRows.map(r=>r.rowHTML).join('')+unassignedRow;
 
   el.innerHTML=`
@@ -1064,7 +1089,6 @@ function rGantt(){
     <div class="gantt-wrap">
       <div class="gantt-members">
         <div class="gantt-member-header">팀원 (${S.members.length}명)</div>
-        <div class="gantt-member-row" style="height:20px;border-bottom:1px solid var(--border-light)"></div>
         ${membersHTML}
       </div>
       <div class="gantt-chart" id="gantt-chart-scroll">
@@ -1073,7 +1097,6 @@ function rGantt(){
       </div>
     </div>`;
 
-  // Scroll to today
   setTimeout(()=>{
     const sc=document.getElementById('gantt-chart-scroll');
     if(sc&&ganttOffset===0){
@@ -1180,22 +1203,32 @@ function rAnnual(){
 
 // Render gantt into any element (used for annual view embedding)
 function rGanttInto(el){
-  el.innerHTML='';
-  const fakeEl={innerHTML:''};
-  const origGet=document.getElementById.bind(document);
-  // render gantt content, capture HTML
   const td=today();
   const base=new Date(td+'T00:00:00');
   base.setDate(base.getDate()+ganttOffset);
   const startDate=new Date(base);
   const COL_W=ganttRange<=30?40:ganttRange<=90?26:16;
+
   const days=[];
-  for(let i=0;i<ganttRange;i++){const d=new Date(startDate);d.setDate(startDate.getDate()+i);days.push(d.toISOString().slice(0,10));}
+  for(let i=0;i<ganttRange;i++){
+    const d=new Date(startDate);d.setDate(startDate.getDate()+i);
+    days.push(d.toISOString().slice(0,10));
+  }
   const startStr=days[0],endStr=days[days.length-1];
   const fmt=ds=>`${ds.slice(5,7)}/${ds.slice(8)}`;
   const rangeLabel=`${startStr.slice(0,4)}년 ${fmt(startStr)} — ${fmt(endStr)}`;
   const dayKR=['일','월','화','수','목','금','토'];
-  const allProjs=S.projects.filter(p=>p.start<=endStr&&p.end>=startStr);
+
+  // Status helper
+  function getProjStatus(p){
+    const dday=Math.ceil((new Date(p.end)-new Date(td))/(1000*60*60*24));
+    if(dday<0) return {l:'완료',bg:'#DCFCE7',c:'#16A34A'};
+    if(dday===0) return {l:'D-Day',bg:'#FEF9C3',c:'#CA8A04'};
+    if(dday<=7) return {l:'마감임박',bg:'#FEE2E2',c:'#DC2626'};
+    return {l:'진행중',bg:'#DBEAFE',c:'#2563EB'};
+  }
+
+  // Header cols
   const headerCols=days.map(ds=>{
     const d=new Date(ds+'T00:00:00');const dow=d.getDay();
     const isToday=ds===td;const isWE=dow===0||dow===6;
@@ -1208,68 +1241,100 @@ function rGanttInto(el){
       ${showNum?`<div class="gantt-day-num" style="font-size:${ganttRange<=30?'11px':'10px'};${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':isToday?'color:#2563EB':''}">${numLabel}</div>`:''}
     </div>`;
   }).join('');
-  const memberRows=S.members.map((m,mi)=>{
+
+  const allProjs=S.projects.filter(p=>p.start<=endStr&&p.end>=startStr);
+
+  // Build rows per member, one row per project
+  let labelRows='', chartRows='';
+
+  S.members.forEach((m,mi)=>{
     const c=ac(mi);
     const memberProjs=allProjs.filter(p=>p.members&&p.members.includes(m.id));
-    const cells=days.map(ds=>{
-      const d=new Date(ds+'T00:00:00');const dow=d.getDay();
-      const isToday=ds===td;const isWE=dow===0||dow===6;
-      const holiCell=getHoliday(ds);
-      return`<div class="gantt-cell${isToday?' today':''}${isWE||holiCell?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px${holiCell?';background:#FFF0F0':''}" ondblclick="openGanttAdd('${m.id}','${ds}')"></div>`;
-    }).join('');
-    const bars=memberProjs.map((p,pi)=>{
-      const ps=p.start<startStr?startStr:p.start;const pe=p.end>endStr?endStr:p.end;
-      const si=days.indexOf(ps),ei=days.indexOf(pe);if(si<0||ei<0)return'';
-      const left=si*COL_W+2,width=Math.max((ei-si+1)*COL_W-4,COL_W-4),top=4+pi*34;
+    if(!memberProjs.length){
+      // empty row
+      const cells=days.map(ds=>{
+        const d=new Date(ds+'T00:00:00');const dow=d.getDay();
+        const holiC=getHoliday(ds);
+        return`<div class="gantt-cell${ds===td?' today':''}${dow===0||dow===6||holiC?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px"></div>`;
+      }).join('');
+      labelRows+=`<div class="gsi-label-row" style="height:44px">
+        <div class="gsi-col-member">${avHTML(m,24,mi)}<span>${m.name}</span></div>
+        <div class="gsi-col-proj" style="color:var(--text-3);font-size:11px">—</div>
+        <div class="gsi-col-status"></div>
+      </div>`;
+      chartRows+=`<div class="gantt-row" style="height:44px;position:relative">${cells}</div>`;
+      return;
+    }
+    memberProjs.forEach((p,pi)=>{
+      const BAR_H=26,PAD=9;
+      const rowH=BAR_H+PAD*2;
+      const status=getProjStatus(p);
       const dday=Math.ceil((new Date(p.end)-new Date(td))/(1000*60*60*24));
       const ddayStr=dday<0?`D+${Math.abs(dday)}`:dday===0?'D-Day':`D-${dday}`;
-      return`<div class="gantt-bar" style="left:${left}px;width:${width}px;background:${p.color}22;color:${p.color};border:1.5px solid ${p.color};top:${top}px" title="${p.name}" onclick="openProjDetail('${p.id}')">
-        ${width>60?`<span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${p.name}</span>`:''}
-        ${width>90?`<span style="font-size:10px;opacity:.7;flex-shrink:0">${ddayStr}</span>`:''}
+      const photoSrc=S.memberPhotos&&S.memberPhotos[m.id];
+
+      // bar
+      const ps=p.start<startStr?startStr:p.start;
+      const pe=p.end>endStr?endStr:p.end;
+      const si=days.indexOf(ps),ei=days.indexOf(pe);
+      let bar='';
+      if(si>=0&&ei>=0){
+        const left=si*COL_W+2;
+        const width=Math.max((ei-si+1)*COL_W-4,COL_W-4);
+        bar=`<div class="gantt-bar2" style="left:${left}px;width:${width}px;background:${p.color}22;color:${p.color};border-left:3px solid ${p.color};top:${PAD}px;transform:none;position:absolute;height:${BAR_H}px"
+          onclick="openProjDetail('${p.id}')" title="${p.name}">
+          ${width>50?`<span style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-size:11px">${p.name}</span>`:''}
+          ${width>100?`<span style="font-size:10px;opacity:.85;flex-shrink:0">${ddayStr}</span>`:''}
+        </div>`;
+      }
+      const cells=days.map(ds=>{
+        const d=new Date(ds+'T00:00:00');const dow=d.getDay();
+        const holiC=getHoliday(ds);
+        return`<div class="gantt-cell${ds===td?' today':''}${dow===0||dow===6||holiC?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px${holiC?';background:#FFF0F080':''}"></div>`;
+      }).join('');
+
+      // Show member only on first project row
+      labelRows+=`<div class="gsi-label-row" style="height:${rowH}px${pi===0?';border-top:1px solid var(--border-light)':''}">
+        <div class="gsi-col-member">
+          ${pi===0?`${photoSrc?`<img src="${photoSrc}" style="width:24px;height:24px;border-radius:50%;object-fit:cover">`:
+            `<div style="width:24px;height:24px;border-radius:50%;background:${c.bg};color:${c.t};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">${m.name.slice(0,2)}</div>`}
+          <span style="font-size:12px;font-weight:600">${m.name}</span>`:''}
+        </div>
+        <div class="gsi-col-proj" onclick="openProjDetail('${p.id}')">${p.name}</div>
+        <div class="gsi-col-status"><span style="background:${status.bg};color:${status.c};padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap">${status.l}</span></div>
+      </div>`;
+      chartRows+=`<div class="gantt-row" style="height:${rowH}px;position:relative${pi===0?';border-top:1px solid var(--border-light)':''}">
+        ${cells}${bar}
       </div>`;
     });
-    const rowH=Math.max(52,memberProjs.length*34+12);
-    const photoSrc=S.memberPhotos&&S.memberPhotos[m.id];
-    return{
-      mh:`<div class="gantt-member-row" style="height:${rowH}px">
-        <div class="gantt-member-avatar" style="background:${c.bg};color:${c.t}">${photoSrc?`<img src="${photoSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${m.name.slice(0,2)}`}</div>
-        <div class="gantt-member-name">${m.name}</div>
-        <div style="font-size:10px;color:var(--text-2);margin-left:auto">${memberProjs.length}개</div>
-      </div>`,
-      rh:`<div class="gantt-row" style="height:${rowH}px;position:relative">${cells}${bars.join('')}</div>`
-    };
   });
-  // Build mini calendar for current month
-  const miniCalHTML=(()=>{
-    const baseDate=new Date(days[0]+'T00:00:00');
-    const months=[];
-    const seen=new Set();
-    days.forEach(ds=>{const m=ds.slice(0,7);if(!seen.has(m)){seen.add(m);months.push(m);}});
-    return months.slice(0,ganttRange<=30?1:ganttRange<=90?3:5).map(ym=>{
-      const [y,m]=ym.split('-').map(Number);
-      const firstDay=new Date(y,m-1,1).getDay();
-      const lastDate=new Date(y,m,0).getDate();
-      const dayKR2=['일','월','화','수','목','금','토'];
-      let cells='';
-      for(let i=0;i<firstDay;i++) cells+=`<div></div>`;
-      for(let d=1;d<=lastDate;d++){
-        const ds=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        const dow=new Date(ds+'T00:00:00').getDay();
-        const isToday=ds===td;
-        const holi=getHoliday(ds);
-        const color=isToday?'#fff':holi||dow===0?'#EF4444':dow===6?'#3B82F6':'var(--text)';
-        const bg=isToday?'var(--accent)':'';
-        cells+=`<div style="text-align:center;font-size:11px;font-weight:${isToday?700:400};color:${color};background:${bg};border-radius:50%;width:22px;height:22px;line-height:22px;margin:auto;cursor:pointer" title="${holi||''}" onclick="ganttOffset=0;ganttRange=30;rAnnual()">${d}</div>`;
-      }
-      return`<div style="background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px;min-width:200px">
-        <div style="font-size:12px;font-weight:600;color:var(--text);text-align:center;margin-bottom:8px">${y}년 ${m}월</div>
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px">
-          ${dayKR2.map((d,i)=>`<div style="text-align:center;font-size:10px;font-weight:500;color:${i===0?'#EF4444':i===6?'#3B82F6':'var(--text-2)'}">${d}</div>`).join('')}
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">${cells}</div>
-      </div>`;
-    }).join('');
-  })();
+
+  // Mini calendars
+  const seen=new Set();
+  const months=[];
+  days.forEach(ds=>{const m=ds.slice(0,7);if(!seen.has(m)){seen.add(m);months.push(m);}});
+  const miniCalHTML=months.slice(0,ganttRange<=30?1:ganttRange<=90?3:5).map(ym=>{
+    const [y,m]=ym.split('-').map(Number);
+    const firstDay=new Date(y,m-1,1).getDay();
+    const lastDate=new Date(y,m,0).getDate();
+    const dayKR2=['일','월','화','수','목','금','토'];
+    let cells='';
+    for(let i=0;i<firstDay;i++) cells+=`<div></div>`;
+    for(let d=1;d<=lastDate;d++){
+      const ds=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const dow=new Date(ds+'T00:00:00').getDay();
+      const isToday=ds===td;const holi=getHoliday(ds);
+      const color=isToday?'#fff':holi||dow===0?'#EF4444':dow===6?'#3B82F6':'var(--text)';
+      cells+=`<div style="text-align:center;font-size:11px;font-weight:${isToday?700:400};color:${color};background:${isToday?'var(--accent)':''};border-radius:50%;width:22px;height:22px;line-height:22px;margin:auto">${d}</div>`;
+    }
+    return`<div style="background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px;min-width:200px">
+      <div style="font-size:12px;font-weight:600;color:var(--text);text-align:center;margin-bottom:8px">${y}년 ${m}월</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px">
+        ${dayKR2.map((d,i)=>`<div style="text-align:center;font-size:10px;font-weight:500;color:${i===0?'#EF4444':i===6?'#3B82F6':'var(--text-2)'}">${d}</div>`).join('')}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">${cells}</div>
+    </div>`;
+  }).join('');
 
   el.innerHTML=`
     ${buildAiPanel()}
@@ -1287,23 +1352,34 @@ function rGanttInto(el){
         <button class="gantt-range-btn" style="background:var(--accent);color:#fff;border-color:var(--accent)" onclick="openAddProjModal()">+ 프로젝트 추가</button>
       </div>
     </div>
-    <div class="gantt-wrap">
-      <div class="gantt-members">
-        <div class="gantt-member-header">팀원 (${S.members.length}명)</div>
-        <div class="gantt-member-row" style="height:20px;border-bottom:1px solid var(--border-light)"></div>
-        ${memberRows.map(r=>r.mh).join('')}
+    <div class="gantt-wrap" style="flex:1;overflow:hidden">
+      <div class="gsi-label-panel">
+        <div class="gsi-label-header">
+          <div class="gsi-col-member">담당자</div>
+          <div class="gsi-col-proj">작품명</div>
+          <div class="gsi-col-status">진행여부</div>
+        </div>
+        <div class="gsi-label-body">${labelRows}</div>
       </div>
       <div class="gantt-chart" id="gantt-chart-annual">
         <div class="gantt-header">${headerCols}</div>
-        <div class="gantt-rows">${memberRows.map(r=>r.rh).join('')}</div>
+        <div class="gantt-rows">${chartRows}</div>
       </div>
     </div>
     <div style="display:flex;gap:12px;padding:16px;overflow-x:auto;border-top:1px solid var(--border-light);flex-wrap:wrap">
       ${miniCalHTML}
     </div>`;
+
   setTimeout(()=>{
     const sc=document.getElementById('gantt-chart-annual');
     if(sc&&ganttOffset===0){const ti=days.indexOf(td);if(ti>0)sc.scrollLeft=Math.max(0,(ti-3)*COL_W);}
+    // Sync scroll between label and chart
+    const lb=el.querySelector('.gsi-label-body');
+    const rows=el.querySelector('.gantt-rows');
+    if(lb&&rows){
+      lb.addEventListener('scroll',()=>rows.scrollTop=lb.scrollTop);
+      rows.addEventListener('scroll',()=>lb.scrollTop=rows.scrollTop);
+    }
   },50);
 }
 
