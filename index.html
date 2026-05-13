@@ -908,7 +908,7 @@ function rTeam(){
       const projs=projsOnDate(ds,[m.id]);
       let cards='';
       projs.forEach(p=>{
-        cards+=`<div class="tv-proj-card" style="background:${p.color}1A;border-left:3px solid ${p.color};color:${p.color}" title="${p.name}">${p.name}</div>`;
+        cards+=`<div class="tv-proj-card" style="background:${p.color}1A;border-left:3px solid ${p.color};color:${p.color};cursor:pointer" title="${p.name}" onclick="event.stopPropagation();openProjDetail('${p.id}')">${p.name}</div>`;
       });
       ws.forEach((w)=>{
         const cat=gc(w.catId);
@@ -1947,6 +1947,39 @@ function showEditProj(id){
   openProjDetail(id);
 }
 
+function buildProjMiniCal(p){
+  const td=today();
+  const dk=['일','월','화','수','목','금','토'];
+  const months=[];
+  let cur=new Date(p.start.slice(0,4),parseInt(p.start.slice(5,7))-1,1);
+  const endMo=new Date(p.end.slice(0,4),parseInt(p.end.slice(5,7))-1,1);
+  while(cur<=endMo){months.push(new Date(cur));cur=new Date(cur.getFullYear(),cur.getMonth()+1,1);}
+  return months.map(mo=>{
+    const y=mo.getFullYear(),m=mo.getMonth();
+    const fd=new Date(y,m,1).getDay(),ld=new Date(y,m+1,0).getDate();
+    let cells='';
+    for(let i=0;i<fd;i++) cells+='<div></div>';
+    for(let d=1;d<=ld;d++){
+      const ds=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+      const dow=new Date(ds+'T00:00:00').getDay();
+      const inRange=ds>=p.start&&ds<=p.end;
+      const isStart=ds===p.start,isEnd=ds===p.end,isToday=ds===td;
+      const holi=getHoliday(ds);
+      const bg=isStart||isEnd?p.color:inRange?p.color+'22':'transparent';
+      const col=isStart||isEnd?'#fff':holi||dow===0?'#EF4444':dow===6?'#3B82F6':inRange?p.color:'var(--text)';
+      const fw=isStart||isEnd||isToday?700:400;
+      const outline=isToday&&!inRange?'2px solid var(--accent)':'none';
+      cells+='<div style="text-align:center;font-size:11px;width:24px;height:24px;line-height:24px;margin:auto;border-radius:'+(isStart||isEnd?'50%':'3px')+';background:'+bg+';color:'+col+';font-weight:'+fw+';outline:'+outline+'">'+d+'</div>';
+    }
+    const header=dk.map((d,i)=>'<div style="text-align:center;font-size:9px;font-weight:500;color:'+(i===0?'#EF4444':i===6?'#3B82F6':'var(--text-2)')+'">'+d+'</div>').join('');
+    return '<div style="background:var(--bg-hover);border:1px solid var(--border-light);border-radius:var(--radius);padding:10px;min-width:190px">'
+      +'<div style="font-size:11px;font-weight:600;color:var(--text);text-align:center;margin-bottom:6px">'+y+'년 '+(m+1)+'월</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-bottom:3px">'+header+'</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px">'+cells+'</div>'
+      +'</div>';
+  }).join('');
+}
+
 function openProjDetail(id){
   const p=S.projects.find(x=>x.id===id);if(!p)return;
   if(!p.detail)p.detail={tasks:[],memo:'',driveLink:''};
@@ -1970,7 +2003,7 @@ function openProjDetail(id){
         ${t.done?'✓':''}
       </div>
       <input class="pd-task-text" value="${t.text||''}" style="${t.done?'text-decoration:line-through;color:var(--text-3)':''}"
-        onchange="updatePdTask('${id}',${i},this.value)"
+        oninput="updatePdTask('${id}',${i},this.value)"
         onkeydown="if(event.key==='Enter'){event.preventDefault();addPdTask('${id}')}"
         placeholder="할 일 입력...">
       <input type="date" class="pd-task-date" value="${t.date||''}" style="border:none;background:none;font-size:11px;color:var(--text-3);cursor:pointer" onchange="updatePdTaskDate('${id}',${i},this.value)">
@@ -1978,8 +2011,8 @@ function openProjDetail(id){
 
   const driveHTML=d.driveLink
     ? `<a class="pd-drive-link" href="${d.driveLink}" target="_blank">📁 ${d.driveLink}</a>
-       <input class="pd-drive-input" value="${d.driveLink}" placeholder="Google Drive 링크" onchange="updatePdDrive('${id}',this.value)">`
-    : `<input class="pd-drive-input" value="" placeholder="Google Drive 링크 입력..." onchange="updatePdDrive('${id}',this.value)">`;
+       <input class="pd-drive-input" value="${d.driveLink}" placeholder="Google Drive 링크" oninput="updatePdDrive('${id}',this.value)">`
+    : `<input class="pd-drive-input" value="" placeholder="Google Drive 링크 입력..." oninput="updatePdDrive('${id}',this.value)">`;
 
   const overlay=document.createElement('div');
   overlay.className='proj-detail-overlay';
@@ -1998,7 +2031,7 @@ function openProjDetail(id){
         <button class="pd-close-btn" onclick="closeProjDetail()">✕</button>
       </div>
       <div class="pd-body">
-        <input class="pd-title" id="pd-title" value="${p.name}" placeholder="프로젝트 이름">
+        <input class="pd-title" id="pd-title" value="${p.name}" placeholder="프로젝트 이름" oninput="autoSavePdTitle('${id}',this.value)">
         <div class="pd-props">
           <div class="pd-prop-row">
             <span class="pd-prop-label">Status</span>
@@ -2026,7 +2059,7 @@ function openProjDetail(id){
         <div class="pd-add-task" onclick="addPdTask('${id}')">+ 새 태스크 추가</div>
 
         <div class="pd-section-title">📝 메모</div>
-        <textarea class="pd-memo" id="pd-memo" placeholder="프로젝트 관련 메모를 자유롭게 작성하세요...">${d.memo||''}</textarea>
+        <textarea class="pd-memo" id="pd-memo" placeholder="프로젝트 관련 메모를 자유롭게 작성하세요..." oninput="autoSavePdMemo('${id}',this.value)">${d.memo||''}</textarea>
       </div>
     </div>`;
   document.body.appendChild(overlay);
@@ -2037,6 +2070,26 @@ function closeProjDetail(){
   if(el)el.remove();
 }
 
+function autoSavePdTitle(id,val){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  p.name=val.trim()||p.name;
+  clearTimeout(autoSavePdTitle._t);
+  autoSavePdTitle._t=setTimeout(()=>{lsSave();rProject();showSavedIndicator();},500);
+}
+function autoSavePdMemo(id,val){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  if(!p.detail)p.detail={tasks:[],memo:'',driveLink:''};
+  p.detail.memo=val;
+  clearTimeout(autoSavePdMemo._t);
+  autoSavePdMemo._t=setTimeout(()=>{lsSave();showSavedIndicator();},500);
+}
+function showSavedIndicator(){
+  const btn=document.querySelector('.pd-save-btn');
+  if(!btn)return;
+  btn.textContent='저장됨 ✓';btn.style.background='#16A34A';
+  clearTimeout(showSavedIndicator._t);
+  showSavedIndicator._t=setTimeout(()=>{btn.textContent='저장';btn.style.background='';},1500);
+}
 function saveProjDetail(id){
   const p=S.projects.find(x=>x.id===id);if(!p)return;
   if(!p.detail)p.detail={tasks:[],memo:'',driveLink:''};
@@ -2080,7 +2133,9 @@ function addPdTask(id){
 function updatePdDrive(id,val){
   const p=S.projects.find(x=>x.id===id);if(!p)return;
   if(!p.detail)p.detail={tasks:[],memo:'',driveLink:''};
-  p.detail.driveLink=val;lsSave();
+  p.detail.driveLink=val;
+  clearTimeout(updatePdDrive._t);
+  updatePdDrive._t=setTimeout(()=>{lsSave();showSavedIndicator();},500);
 }
 
 function openProjEditModal(id){
