@@ -2132,12 +2132,9 @@ function delCat(cid){
 
   setTimeout(()=>{
     overlay.remove();
-    rSide();rTeam();
-    // if annual view was active, show toggle
-    if(S.view==='annual'){
-      const tog=document.getElementById('topbar-toggle');
-      if(tog) tog.style.display='flex';
-    }
+    rSide();
+    const teamTab=document.querySelectorAll('.tb-tab')[2];
+    sv('team', teamTab);
   },150);
 })();
 
