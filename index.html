@@ -345,22 +345,24 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
 .v-gantt.on{display:flex}
 .gantt-toolbar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border-light);flex-shrink:0;background:var(--bg)}
 .gantt-toolbar-title{font-size:13px;font-weight:600;color:var(--text);min-width:80px}
-.gantt-wrap{display:flex;flex:1;overflow:hidden}
+.gantt-wrap{display:flex;flex:1;overflow:hidden;border-top:2px solid var(--border-light);margin-top:4px}
 .gantt-members{width:180px;flex-shrink:0;border-right:1px solid var(--border-light);overflow-y:auto;background:var(--bg)}
-.gantt-member-header{height:44px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;padding:0 12px;font-size:11px;font-weight:600;color:var(--text-2);background:var(--bg-hover)}
-.gantt-member-row{height:52px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;padding:0 12px;gap:8px;font-size:13px;color:var(--text)}
+.gantt-member-header{height:48px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;padding:0 12px;font-size:11px;font-weight:600;color:var(--text-2);background:var(--bg-hover)}
+.gantt-member-row{height:52px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;padding:0 12px;gap:8px;font-size:13px;color:var(--text);cursor:pointer}
+.gantt-member-row:first-child{border-top:2px solid var(--border-light)}
 .gantt-member-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
 .gantt-member-avatar img{width:100%;height:100%;object-fit:cover}
 .gantt-member-name{font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gantt-chart{flex:1;overflow:auto;position:relative}
-.gantt-header{display:flex;height:44px;border-bottom:1px solid var(--border-light);position:sticky;top:0;z-index:10;background:var(--bg);min-width:max-content}
-.gantt-day-col{flex-shrink:0;border-right:1px solid var(--border-light);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-hover)}
+.gantt-header{display:flex;height:48px;border-bottom:1px solid var(--border-light);position:sticky;top:0;z-index:10;background:var(--bg);min-width:max-content}
+.gantt-day-col{flex-shrink:0;border-right:1px solid var(--border-light);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-hover);height:44px;overflow:hidden}
 .gantt-day-col.today{background:#EFF6FF}
-.gantt-day-name{font-size:10px;color:var(--text-2);font-weight:500}
-.gantt-day-num{font-size:13px;font-weight:600;color:var(--text)}
+.gantt-day-name{font-size:9px;color:var(--text-2);font-weight:500;white-space:nowrap}
+.gantt-day-num{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap}
 .gantt-day-col.today .gantt-day-num{color:#2563EB}
 .gantt-rows{min-width:max-content}
 .gantt-row{height:52px;display:flex;position:relative;border-bottom:1px solid var(--border-light)}
+.gantt-rows>.gantt-row:first-child{margin-top:0}
 .gantt-cell{flex-shrink:0;border-right:1px solid var(--border-light);height:100%}
 .gantt-cell.today{background:#EFF6FF20}
 .gantt-cell.weekend{background:var(--bg-hover)}
@@ -370,6 +372,40 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
 .gantt-range-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .gantt-nav-btn{width:28px;height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
 
+
+/* ── GOOGLE CALENDAR STYLE MONTHLY VIEW ── */
+.gcal-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden}
+.gcal-toolbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border-light);flex-shrink:0;gap:12px;flex-wrap:wrap}
+.gcal-nav-btn{width:30px;height:30px;border:1px solid var(--border);border-radius:50%;background:var(--bg);color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .12s}
+.gcal-nav-btn:hover{background:var(--bg-hover)}
+.gcal-today-btn{padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:var(--bg);color:var(--text);cursor:pointer;font-size:13px;font-weight:500;transition:background .12s}
+.gcal-today-btn:hover{background:var(--bg-hover)}
+.gcal-month-label{font-size:18px;font-weight:600;color:var(--text)}
+.gcal-body{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.gcal-dow-header{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border-light);flex-shrink:0}
+.gcal-dow{padding:8px 0;text-align:center;font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase}
+.gcal-dow.sun{color:#EF4444}
+.gcal-dow.sat{color:#3B82F6}
+.gcal-grid{display:grid;grid-template-columns:repeat(7,1fr);flex:1;overflow-y:auto}
+.gcal-cell{border-right:1px solid var(--border-light);border-bottom:1px solid var(--border-light);padding:4px;min-height:110px;cursor:pointer;transition:background .1s;display:flex;flex-direction:column;gap:2px}
+.gcal-cell:hover{background:var(--bg-hover)}
+.gcal-cell.today{background:#EFF6FF}
+.gcal-cell.weekend{background:#FAFAFA}
+.gcal-cell.holiday{background:#FFF5F5}
+.gcal-cell.other-month{background:#F9F9F9}
+.gcal-date-row{display:flex;align-items:center;gap:4px;margin-bottom:2px}
+.gcal-date-num{font-size:13px;font-weight:500;color:var(--text);min-width:26px;text-align:center;line-height:26px}
+.gcal-holi-label{font-size:9px;color:#EF4444;font-weight:500}
+.gcal-date.other{font-size:12px;color:var(--text-3);padding:4px}
+.gcal-event-bar{display:flex;align-items:center;padding:2px 6px;border-radius:3px;font-size:11px;font-weight:500;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;transition:opacity .12s;line-height:18px}
+.gcal-event-bar:hover{opacity:.85;filter:brightness(.95)}
+.gcal-event-bar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gcal-work-item{display:flex;align-items:center;gap:4px;padding:1px 4px;border-radius:3px;font-size:11px;color:var(--text);overflow:hidden;white-space:nowrap;cursor:pointer;transition:background .1s}
+.gcal-work-item:hover{background:var(--border-light)}
+.gcal-work-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.gcal-work-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gcal-more{font-size:10px;color:var(--accent);cursor:pointer;padding:1px 4px;font-weight:500}
+.gcal-more:hover{text-decoration:underline}
 /* ── PROJECT DETAIL PAGE ── */
 .proj-detail-overlay{position:fixed;inset:0;z-index:200;display:flex;justify-content:flex-end;background:rgba(0,0,0,.3);animation:fadeIn .15s}
 .proj-detail-panel{width:min(780px,95vw);height:100vh;background:var(--bg);overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,.12);display:flex;flex-direction:column;animation:slideInRight .2s}
@@ -902,7 +938,7 @@ function rGantt(){
   const base=new Date(td+'T00:00:00');
   base.setDate(base.getDate()+ganttOffset);
   const startDate=new Date(base);
-  const COL_W=ganttRange<=30?38:ganttRange<=90?20:12;
+  const COL_W=ganttRange<=30?40:ganttRange<=90?26:16;
 
   const days=[];
   for(let i=0;i<ganttRange;i++){
@@ -919,11 +955,13 @@ function rGantt(){
     const dow=d.getDay();
     const isToday=ds===td;
     const isWE=dow===0||dow===6;
-    const showLabel=ganttRange<=30||(ganttRange<=90&&d.getDate()%3===1)||(d.getDate()===1||d.getDate()===15);
     const holiH=getHoliday(ds);
+    const showDow=ganttRange<=30;
+    const showNum=ganttRange<=30||(ganttRange<=90&&d.getDate()%2===1)||d.getDate()===1||(ganttRange>90&&d.getDate()%5===1);
+    const numLabel=ganttRange<=90?d.getDate():(d.getDate()===1?`${d.getMonth()+1}월`:'');
     return`<div class="gantt-day-col${isToday?' today':''}" style="width:${COL_W}px;min-width:${COL_W}px${holiH?';background:#FFF0F0':''}">
-      ${showLabel?`<div class="gantt-day-name" style="${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':''}">${holiH?'●':dayKR[dow]}</div>`:'<div class="gantt-day-name"></div>'}
-      <div class="gantt-day-num" style="${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':isToday?'color:#2563EB':''}">${ganttRange<=90?d.getDate():d.getDate()===1?`${d.getMonth()+1}월`:''}</div>
+      ${showDow?`<div class="gantt-day-name" style="${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':''}">${holiH?'●':dayKR[dow]}</div>`:''}
+      ${showNum?`<div class="gantt-day-num" style="font-size:${ganttRange<=30?'11px':'10px'};${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':isToday?'color:#2563EB':''}">${numLabel}</div>`:''}
     </div>`;
   }).join('');
 
@@ -1149,7 +1187,7 @@ function rGanttInto(el){
   const base=new Date(td+'T00:00:00');
   base.setDate(base.getDate()+ganttOffset);
   const startDate=new Date(base);
-  const COL_W=ganttRange<=30?38:ganttRange<=90?20:12;
+  const COL_W=ganttRange<=30?40:ganttRange<=90?26:16;
   const days=[];
   for(let i=0;i<ganttRange;i++){const d=new Date(startDate);d.setDate(startDate.getDate()+i);days.push(d.toISOString().slice(0,10));}
   const startStr=days[0],endStr=days[days.length-1];
@@ -1160,11 +1198,13 @@ function rGanttInto(el){
   const headerCols=days.map(ds=>{
     const d=new Date(ds+'T00:00:00');const dow=d.getDay();
     const isToday=ds===td;const isWE=dow===0||dow===6;
-    const showLabel=ganttRange<=30||(ganttRange<=90&&d.getDate()%3===1)||(d.getDate()===1||d.getDate()===15);
     const holiH=getHoliday(ds);
+    const showDow=ganttRange<=30;
+    const showNum=ganttRange<=30||(ganttRange<=90&&d.getDate()%2===1)||d.getDate()===1||(ganttRange>90&&d.getDate()%5===1);
+    const numLabel=ganttRange<=90?d.getDate():(d.getDate()===1?`${d.getMonth()+1}월`:'');
     return`<div class="gantt-day-col${isToday?' today':''}" style="width:${COL_W}px;min-width:${COL_W}px${holiH?';background:#FFF0F0':''}">
-      ${showLabel?`<div class="gantt-day-name" style="${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':''}">${holiH?'●':dayKR[dow]}</div>`:'<div class="gantt-day-name"></div>'}
-      <div class="gantt-day-num" style="${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':isToday?'color:#2563EB':''}">${ganttRange<=90?d.getDate():d.getDate()===1?`${d.getMonth()+1}월`:''}</div>
+      ${showDow?`<div class="gantt-day-name" style="${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':''}">${holiH?'●':dayKR[dow]}</div>`:''}
+      ${showNum?`<div class="gantt-day-num" style="font-size:${ganttRange<=30?'11px':'10px'};${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':isToday?'color:#2563EB':''}">${numLabel}</div>`:''}
     </div>`;
   }).join('');
   const memberRows=S.members.map((m,mi)=>{
@@ -1485,69 +1525,90 @@ function rMonthly(el,toggleHTML){
   const m=S.selMonth,y=S.year,td=today();
   const days=dim(y,m),fd=fdm(y,m);
   const filterIds=getFilterIds();
+  const dayKR=['일','월','화','수','목','금','토'];
+
+  // Build calendar cells
   let cells='';
-  for(let i=0;i<fd;i++) cells+=`<div class="mdc empty"></div>`;
+  // Prev month filler
+  const prevDays=dim(y,m===0?11:m-1);
+  for(let i=0;i<fd;i++){
+    const pd=prevDays-fd+i+1;
+    cells+=`<div class="gcal-cell other-month">
+      <div class="gcal-date other">${pd}</div>
+    </div>`;
+  }
+
   for(let d=1;d<=days;d++){
     const ds=dk(y,m,d);
     const ws=filterIds?filterIds.flatMap(mid=>gw(ds,mid)):gaw(ds);
     const projs=projsOnDate(ds,filterIds);
-    const isTod=ds===td?' tod':'';
-    const projBars=projs.map(p=>`<div class="mdc-proj-bar" style="background:${p.color}20;color:${p.color};border-left:2px solid ${p.color};cursor:pointer" onclick="event.stopPropagation();openProjDetail('${p.id}')">${p.name}</div>`).join('');
-    const workDots=ws.map(w=>{const cat=gc(w.catId);return`<div class="dd" style="background:${cat.hx};width:5px;height:5px;border-radius:50%"></div>`}).join('');
-    const holi=getHoliday(ds);
+    const isTod=ds===td;
     const dow=new Date(ds+'T00:00:00').getDay();
     const isWE=dow===0||dow===6;
-    cells+=`<div class="mdc${isTod}" onclick="gotoDate('${ds}')" style="${holi?'background:#FFF5F5':isWE?'background:#FAFAFA':''}">
-      <div class="mdc-num" style="${holi||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':''}">${d}</div>
-      ${holi?`<div style="font-size:8px;color:#EF4444;font-weight:500;line-height:1;margin-bottom:2px">${holi}</div>`:''}
+    const holi=getHoliday(ds);
+    const isFirstOfMonth=d===1;
+
+    // Project bars (show as full-width colored bars like google cal)
+    const projBars=projs.map(p=>{
+      return`<div class="gcal-event-bar" style="background:${p.color};color:#fff" onclick="event.stopPropagation();openProjDetail('${p.id}')" title="${p.name}">
+        <span>${p.name}</span>
+      </div>`;
+    }).join('');
+
+    // Work items as dots with text
+    const workItems=ws.slice(0,3).map(w=>{
+      const cat=gc(w.catId);
+      return`<div class="gcal-work-item" onclick="event.stopPropagation();openDayPop('${w.memberId||''}','${ds}',event)">
+        <div class="gcal-work-dot" style="background:${cat.hx}"></div>
+        <span>${w.text||''}</span>
+      </div>`;
+    }).join('');
+    const moreCount=Math.max(0,ws.length-3);
+
+    const dateStyle=isTod?'background:var(--accent);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;'
+      :holi||dow===0?'color:#EF4444'
+      :dow===6?'color:#3B82F6'
+      :'';
+
+    cells+=`<div class="gcal-cell${isTod?' today':''}${isWE?' weekend':''}${holi?' holiday':''}" onclick="gotoDate('${ds}')">
+      <div class="gcal-date-row">
+        <span class="gcal-date-num" style="${dateStyle}">${isFirstOfMonth&&d>1?`${m+1}월 ${d}일`:d}</span>
+        ${holi?`<span class="gcal-holi-label">${holi}</span>`:''}
+      </div>
       ${projBars}
-      ${workDots?`<div class="mdc-work-dots">${workDots}</div>`:''}
+      ${workItems}
+      ${moreCount>0?`<div class="gcal-more">+${moreCount}개 더보기</div>`:''}
     </div>`;
   }
+
   const remain=(7-(fd+days)%7)%7;
-  for(let i=0;i<remain;i++) cells+=`<div class="mdc empty"></div>`;
-  const ganttHTML=rGanttMonth(y,m,filterIds);
-  let mWorks=[];const activeDays=new Set();
-  for(let d=1;d<=days;d++){
-    const ds=dk(y,m,d);
-    const ws=filterIds?filterIds.flatMap(mid=>gw(ds,mid)):gaw(ds);
-    mWorks.push(...ws);if(ws.length)activeDays.add(ds);
+  for(let i=0;i<remain;i++){
+    cells+=`<div class="gcal-cell other-month"><div class="gcal-date other">${i+1}</div></div>`;
   }
-  const activeProjs=projsInMonth(y,m,filterIds);
-  const projLegend=activeProjs.map(p=>{
-    const s=p.start>dk(y,m,1)?p.start:dk(y,m,1);
-    const e=p.end<dk(y,m,days)?p.end:dk(y,m,days);
-    return`<div class="pl-item"><div class="pl-dot" style="background:${p.color}"></div><span class="pl-name">${p.name}</span><span class="pl-dur">${s.slice(5)}~${e.slice(5)}</span></div>`;
-  }).join('')||`<div style="font-size:11px;color:var(--text-3)">없음</div>`;
-  el.innerHTML=`<div class="annual-wrap">
-    <div class="annual-header" style="margin-bottom:14px">
-      <div class="monthly-header">
-        <button class="mo-nav" onclick="shiftMonth(-1)">← 이전</button>
-        <span class="mo-title">${y}년 ${MONTHS[m]}</span>
-        <button class="mo-nav" onclick="shiftMonth(1)">다음 →</button>
+
+  const monthLabel=`${y}년 ${MONTHS[m]}`;
+
+  el.innerHTML=`<div class="gcal-wrap">
+    <div class="gcal-toolbar">
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="gcal-nav-btn" onclick="shiftMonth(-1)">‹</button>
+        <button class="gcal-today-btn" onclick="S.selMonth=new Date().getMonth();S.year=new Date().getFullYear();rAnnual()">오늘</button>
+        <button class="gcal-nav-btn" onclick="shiftMonth(1)">›</button>
+        <span class="gcal-month-label">${monthLabel}</span>
       </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${memberFilterHTML()}${toggleHTML}</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        ${memberFilterHTML()}
+        ${toggleHTML}
+      </div>
     </div>
     ${buildAiPanel()}
-    <div class="month-cal-wrap">
-      <div>
-        <div class="month-cal">
-          <div class="mcal-head">${DAYS.map(l=>`<div class="mcal-dl">${l}</div>`).join('')}</div>
-          <div class="mcal-grid">${cells}</div>
-        </div>
-
+    <div class="gcal-body">
+      <div class="gcal-dow-header">
+        ${['일','월','화','수','목','금','토'].map((d,i)=>`<div class="gcal-dow${i===0?' sun':i===6?' sat':''}">${d}</div>`).join('')}
       </div>
-      <div class="mo-detail">
-        <div class="mo-det-title">${MONTHS[m]} 요약</div>
-        <div class="mo-stat-grid">
-          <div class="mo-stat"><div class="mo-stat-l">총 업무</div><div class="mo-stat-v">${mWorks.length}</div></div>
-          <div class="mo-stat"><div class="mo-stat-l">활동일</div><div class="mo-stat-v">${activeDays.size}</div></div>
-          <div class="mo-stat"><div class="mo-stat-l">프로젝트</div><div class="mo-stat-v">${activeProjs.length}</div></div>
-        </div>
-        <div class="mo-det-title" style="margin-bottom:8px">이달 프로젝트</div>
-        <div>${projLegend}</div>
-      </div>
-    </div></div>`;
+      <div class="gcal-grid">${cells}</div>
+    </div>
+  </div>`;
 }
 
 function rGanttMonth(y,m,filterIds){
@@ -1834,7 +1895,7 @@ function openProjDetail(id){
   const status=dday<0?{l:'완료',bg:'#DCFCE7',c:'#16A34A'}:dday===0?{l:'D-Day',bg:'#FEF9C3',c:'#CA8A04'}:dday<=7?{l:'마감임박',bg:'#FEE2E2',c:'#DC2626'}:{l:'진행중',bg:'#DBEAFE',c:'#2563EB'};
 
   // Members
-  const memberAvatars=S.members.filter(m=>p.members.includes(m.id)).map((m,i)=>`${avHTML(m,26,i)}`).join('');
+  const memberAvatars=S.members.filter(m=>p.members.includes(m.id)).map((m,i)=>{const c=ac(i);return`<span style="display:inline-flex;align-items:center;gap:5px;background:${c.bg};color:${c.t};padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600">${avHTML(m,18,i)}${m.name}</span>`;}).join('');
 
   // Categories
   const catBadges=(p.categories||[]).map(cid=>{const c=S.categories.find(x=>x.id===cid);return c?`<span style="background:${c.hx}22;color:${c.hx};border:1px solid ${c.hx}44;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500">${c.l}</span>`:''}).join(' ');
