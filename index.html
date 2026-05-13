@@ -521,7 +521,7 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
   <div class="topbar">
     <div class="tb-brand">팀 업무 트래커</div>
     <div class="tb-tabs">
-      <button class="tb-tab" onclick="sv('annual',this)">연간 보기</button>
+      <button class="tb-tab" onclick="sv('annual',this)">일정</button>
       <button class="tb-tab" onclick="sv('project',this)">프로젝트</button>
       <button class="tb-tab on" onclick="sv('team',this)">주간 업무</button>
     </div>
@@ -1083,6 +1083,7 @@ function rGantt(){
         <button class="gantt-range-btn${ganttRange===30?' on':''}" onclick="ganttRange=30;rGantt()">1개월</button>
         <button class="gantt-range-btn${ganttRange===90?' on':''}" onclick="ganttRange=90;rGantt()">3개월</button>
         <button class="gantt-range-btn${ganttRange===150?' on':''}" onclick="ganttRange=150;rGantt()">5개월</button>
+        <button class="gantt-range-btn${ganttRange===365?' on':''}" onclick="ganttRange=365;rGantt()">12개월</button>
         <button class="gantt-range-btn" style="background:var(--accent);color:#fff;border-color:var(--accent)" onclick="openAddProjModal()">+ 프로젝트 추가</button>
       </div>
     </div>
