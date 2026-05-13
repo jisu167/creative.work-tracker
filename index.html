@@ -1208,6 +1208,7 @@ function rGanttInto(el){
   base.setDate(base.getDate()+ganttOffset);
   const startDate=new Date(base);
   const COL_W=ganttRange<=30?40:ganttRange<=90?26:16;
+  const BAR_H=26,PAD=9,ROW_H=BAR_H+PAD*2;
 
   const days=[];
   for(let i=0;i<ganttRange;i++){
@@ -1219,120 +1220,116 @@ function rGanttInto(el){
   const rangeLabel=`${startStr.slice(0,4)}년 ${fmt(startStr)} — ${fmt(endStr)}`;
   const dayKR=['일','월','화','수','목','금','토'];
 
-  // Status helper
-  function getProjStatus(p){
-    const dday=Math.ceil((new Date(p.end)-new Date(td))/(1000*60*60*24));
-    if(dday<0) return {l:'완료',bg:'#DCFCE7',c:'#16A34A'};
-    if(dday===0) return {l:'D-Day',bg:'#FEF9C3',c:'#CA8A04'};
-    if(dday<=7) return {l:'마감임박',bg:'#FEE2E2',c:'#DC2626'};
-    return {l:'진행중',bg:'#DBEAFE',c:'#2563EB'};
+  function getStatus(p){
+    const d=Math.ceil((new Date(p.end)-new Date(td))/86400000);
+    if(d<0)return{l:'완료',bg:'#DCFCE7',c:'#16A34A'};
+    if(d===0)return{l:'D-Day',bg:'#FEF9C3',c:'#CA8A04'};
+    if(d<=7)return{l:'마감임박',bg:'#FEE2E2',c:'#DC2626'};
+    return{l:'진행중',bg:'#DBEAFE',c:'#2563EB'};
   }
 
-  // Header cols
-  const headerCols=days.map(ds=>{
-    const d=new Date(ds+'T00:00:00');const dow=d.getDay();
-    const isToday=ds===td;const isWE=dow===0||dow===6;
-    const holiH=getHoliday(ds);
-    const showDow=ganttRange<=30;
-    const showNum=ganttRange<=30||(ganttRange<=90&&d.getDate()%2===1)||d.getDate()===1||(ganttRange>90&&d.getDate()%5===1);
-    const numLabel=ganttRange<=90?d.getDate():(d.getDate()===1?`${d.getMonth()+1}월`:'');
-    return`<div class="gantt-day-col${isToday?' today':''}" style="width:${COL_W}px;min-width:${COL_W}px${holiH?';background:#FFF0F0':''}">
-      ${showDow?`<div class="gantt-day-name" style="${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':''}">${holiH?'●':dayKR[dow]}</div>`:''}
-      ${showNum?`<div class="gantt-day-num" style="font-size:${ganttRange<=30?'11px':'10px'};${holiH||dow===0?'color:#EF4444':dow===6?'color:#3B82F6':isToday?'color:#2563EB':''}">${numLabel}</div>`:''}
-    </div>`;
-  }).join('');
-
-  const allProjs=S.projects.filter(p=>p.start<=endStr&&p.end>=startStr);
-
-  // Build rows per member, one row per project
-  let labelRows='', chartRows='';
-
+  // Flat rows
+  const rows=[];
   S.members.forEach((m,mi)=>{
-    const c=ac(mi);
-    const memberProjs=allProjs.filter(p=>p.members&&p.members.includes(m.id));
-    if(!memberProjs.length){
-      // empty row
-      const cells=days.map(ds=>{
-        const d=new Date(ds+'T00:00:00');const dow=d.getDay();
-        const holiC=getHoliday(ds);
-        return`<div class="gantt-cell${ds===td?' today':''}${dow===0||dow===6||holiC?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px"></div>`;
-      }).join('');
-      labelRows+=`<div class="gsi-label-row" style="height:44px">
-        <div class="gsi-col-member">${avHTML(m,24,mi)}<span>${m.name}</span></div>
-        <div class="gsi-col-proj" style="color:var(--text-3);font-size:11px">—</div>
-        <div class="gsi-col-status"></div>
-      </div>`;
-      chartRows+=`<div class="gantt-row" style="height:44px;position:relative">${cells}</div>`;
-      return;
-    }
-    memberProjs.forEach((p,pi)=>{
-      const BAR_H=26,PAD=9;
-      const rowH=BAR_H+PAD*2;
-      const status=getProjStatus(p);
-      const dday=Math.ceil((new Date(p.end)-new Date(td))/(1000*60*60*24));
-      const ddayStr=dday<0?`D+${Math.abs(dday)}`:dday===0?'D-Day':`D-${dday}`;
-      const photoSrc=S.memberPhotos&&S.memberPhotos[m.id];
-
-      // bar
-      const ps=p.start<startStr?startStr:p.start;
-      const pe=p.end>endStr?endStr:p.end;
-      const si=days.indexOf(ps),ei=days.indexOf(pe);
-      let bar='';
-      if(si>=0&&ei>=0){
-        const left=si*COL_W+2;
-        const width=Math.max((ei-si+1)*COL_W-4,COL_W-4);
-        bar=`<div class="gantt-bar2" style="left:${left}px;width:${width}px;background:${p.color}22;color:${p.color};border-left:3px solid ${p.color};top:${PAD}px;transform:none;position:absolute;height:${BAR_H}px"
-          onclick="openProjDetail('${p.id}')" title="${p.name}">
-          ${width>50?`<span style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-size:11px">${p.name}</span>`:''}
-          ${width>100?`<span style="font-size:10px;opacity:.85;flex-shrink:0">${ddayStr}</span>`:''}
-        </div>`;
-      }
-      const cells=days.map(ds=>{
-        const d=new Date(ds+'T00:00:00');const dow=d.getDay();
-        const holiC=getHoliday(ds);
-        return`<div class="gantt-cell${ds===td?' today':''}${dow===0||dow===6||holiC?' weekend':''}" style="width:${COL_W}px;min-width:${COL_W}px${holiC?';background:#FFF0F080':''}"></div>`;
-      }).join('');
-
-      // Show member only on first project row
-      labelRows+=`<div class="gsi-label-row" style="height:${rowH}px${pi===0?';border-top:1px solid var(--border-light)':''}">
-        <div class="gsi-col-member">
-          ${pi===0?`${photoSrc?`<img src="${photoSrc}" style="width:24px;height:24px;border-radius:50%;object-fit:cover">`:
-            `<div style="width:24px;height:24px;border-radius:50%;background:${c.bg};color:${c.t};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">${m.name.slice(0,2)}</div>`}
-          <span style="font-size:12px;font-weight:600">${m.name}</span>`:''}
-        </div>
-        <div class="gsi-col-proj" onclick="openProjDetail('${p.id}')">${p.name}</div>
-        <div class="gsi-col-status"><span style="background:${status.bg};color:${status.c};padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap">${status.l}</span></div>
-      </div>`;
-      chartRows+=`<div class="gantt-row" style="height:${rowH}px;position:relative${pi===0?';border-top:1px solid var(--border-light)':''}">
-        ${cells}${bar}
-      </div>`;
-    });
+    const projs=S.projects.filter(p=>p.start<=endStr&&p.end>=startStr&&p.members&&p.members.includes(m.id));
+    if(!projs.length) rows.push({m,mi,p:null,first:true,span:1,last:true});
+    else projs.forEach((p,pi)=>rows.push({m,mi,p,first:pi===0,span:projs.length,last:pi===projs.length-1}));
   });
 
-  // Mini calendars
-  const seen=new Set();
-  const months=[];
-  days.forEach(ds=>{const m=ds.slice(0,7);if(!seen.has(m)){seen.add(m);months.push(m);}});
+  // Header
+  const thCols=days.map(ds=>{
+    const d=new Date(ds+'T00:00:00'),dow=d.getDay();
+    const isToday=ds===td,holi=getHoliday(ds);
+    const showDow=ganttRange<=30;
+    const showNum=ganttRange<=30||(ganttRange<=90&&d.getDate()%2===1)||d.getDate()===1||(ganttRange>90&&d.getDate()%5===1);
+    return`<th style="width:${COL_W}px;min-width:${COL_W}px;height:48px;padding:2px 0;text-align:center;vertical-align:middle;border-right:1px solid var(--border-light);border-bottom:2px solid var(--border-light);background:${holi?'#FFF0F0':isToday?'#EFF6FF':'var(--bg-hover)'};font-weight:400">
+      ${showDow?`<div style="font-size:9px;color:${holi||dow===0?'#EF4444':dow===6?'#3B82F6':'var(--text-2)'}">${dayKR[dow]}</div>`:''}
+      ${showNum?`<div style="font-size:10px;font-weight:600;color:${holi||dow===0?'#EF4444':dow===6?'#3B82F6':isToday?'#2563EB':'var(--text)'}">${ganttRange<=90?d.getDate():d.getDate()===1?`${d.getMonth()+1}월`:''}</div>`:''}
+    </th>`;
+  }).join('');
+
+  // Body
+  const bodyRows=rows.map(({m,mi,p,first,span,last})=>{
+    const c=ac(mi);
+    const photoSrc=S.memberPhotos&&S.memberPhotos[m.id];
+    const bb=last?'2px':'1px';
+
+    const memberTd=first?`<td rowspan="${span}" style="width:90px;min-width:90px;padding:0 8px;border-right:1px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:var(--bg);position:sticky;left:0;z-index:2;vertical-align:middle">
+      <div style="display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden">
+        ${photoSrc?`<img src="${photoSrc}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0">`:
+          `<div style="width:24px;height:24px;border-radius:50%;background:${c.bg};color:${c.t};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">${m.name.slice(0,2)}</div>`}
+        <span style="font-size:12px;font-weight:600">${m.name}</span>
+      </div>
+    </td>`:'';
+
+    if(!p){
+      return`<tr style="height:${ROW_H}px">${memberTd}
+        <td colspan="${days.length+2}" style="border-bottom:2px solid var(--border-light);padding:0 8px;color:var(--text-3);font-size:11px;background:var(--bg)">프로젝트 없음</td>
+      </tr>`;
+    }
+
+    const status=getStatus(p);
+    const dday=Math.ceil((new Date(p.end)-new Date(td))/86400000);
+    const ddStr=dday<0?`D+${Math.abs(dday)}`:dday===0?'D-Day':`D-${dday}`;
+    const ps=p.start<startStr?startStr:p.start;
+    const pe=p.end>endStr?endStr:p.end;
+    const si=days.indexOf(ps),ei=days.indexOf(pe);
+
+    // Build date cells — inject bar into first in-range cell using colspan trick
+    let dateCells='';
+    if(si<0||ei<0){
+      // No bar visible in range
+      dateCells=days.map(ds=>{
+        const d=new Date(ds+'T00:00:00'),dow=d.getDay(),holi=getHoliday(ds);
+        return`<td style="width:${COL_W}px;border-right:1px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:${holi?'#FFF0F050':dow===0||dow===6?'rgba(0,0,0,.025)':ds===td?'#EFF6FF40':''}"></td>`;
+      }).join('');
+    } else {
+      // Before bar
+      for(let i=0;i<si;i++){
+        const ds=days[i],d=new Date(ds+'T00:00:00'),dow=d.getDay(),holi=getHoliday(ds);
+        dateCells+=`<td style="width:${COL_W}px;border-right:1px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:${holi?'#FFF0F050':dow===0||dow===6?'rgba(0,0,0,.025)':ds===td?'#EFF6FF40':''}"></td>`;
+      }
+      // Bar cell (colspan)
+      const barCols=ei-si+1;
+      const barW=barCols*COL_W-4;
+      dateCells+=`<td colspan="${barCols}" style="padding:${PAD}px 2px;border-right:1px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:${days[si]===td?'#EFF6FF40':''}">
+        <div style="height:${BAR_H}px;background:${p.color}22;color:${p.color};border-left:3px solid ${p.color};border-radius:0 13px 13px 0;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:600;overflow:hidden;cursor:pointer;gap:6px;box-sizing:border-box" onclick="openProjDetail('${p.id}')">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${p.name}</span>
+          ${barW>80?`<span style="font-size:10px;opacity:.7;flex-shrink:0">${ddStr}</span>`:''}
+        </div>
+      </td>`;
+      // After bar
+      for(let i=ei+1;i<days.length;i++){
+        const ds=days[i],d=new Date(ds+'T00:00:00'),dow=d.getDay(),holi=getHoliday(ds);
+        dateCells+=`<td style="width:${COL_W}px;border-right:1px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:${holi?'#FFF0F050':dow===0||dow===6?'rgba(0,0,0,.025)':ds===td?'#EFF6FF40':''}"></td>`;
+      }
+    }
+
+    return`<tr style="height:${ROW_H}px">${memberTd}
+      <td style="min-width:140px;padding:0 8px;border-right:1px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:var(--bg);position:sticky;left:90px;z-index:2;font-size:12px;cursor:pointer" onclick="openProjDetail('${p.id}')">${p.name}</td>
+      <td style="width:72px;min-width:72px;padding:4px 6px;border-right:2px solid var(--border-light);border-bottom:${bb} solid var(--border-light);background:var(--bg);position:sticky;left:230px;z-index:2;text-align:center">
+        <span style="background:${status.bg};color:${status.c};padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap">${status.l}</span>
+      </td>
+      ${dateCells}
+    </tr>`;
+  }).join('');
+
+  // Mini cals
+  const seen=new Set(),months=[];
+  days.forEach(ds=>{const mo=ds.slice(0,7);if(!seen.has(mo)){seen.add(mo);months.push(mo);}});
   const miniCalHTML=months.slice(0,ganttRange<=30?1:ganttRange<=90?3:5).map(ym=>{
-    const [y,m]=ym.split('-').map(Number);
-    const firstDay=new Date(y,m-1,1).getDay();
-    const lastDate=new Date(y,m,0).getDate();
-    const dayKR2=['일','월','화','수','목','금','토'];
-    let cells='';
-    for(let i=0;i<firstDay;i++) cells+=`<div></div>`;
-    for(let d=1;d<=lastDate;d++){
+    const[y,m]=ym.split('-').map(Number);
+    const fd=new Date(y,m-1,1).getDay(),ld=new Date(y,m,0).getDate(),dk2=['일','월','화','수','목','금','토'];
+    let cls='';for(let i=0;i<fd;i++)cls+=`<div></div>`;
+    for(let d=1;d<=ld;d++){
       const ds=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-      const dow=new Date(ds+'T00:00:00').getDay();
-      const isToday=ds===td;const holi=getHoliday(ds);
-      const color=isToday?'#fff':holi||dow===0?'#EF4444':dow===6?'#3B82F6':'var(--text)';
-      cells+=`<div style="text-align:center;font-size:11px;font-weight:${isToday?700:400};color:${color};background:${isToday?'var(--accent)':''};border-radius:50%;width:22px;height:22px;line-height:22px;margin:auto">${d}</div>`;
+      const dow=new Date(ds+'T00:00:00').getDay(),isT=ds===td,h=getHoliday(ds);
+      cls+=`<div style="text-align:center;font-size:11px;color:${isT?'#fff':h||dow===0?'#EF4444':dow===6?'#3B82F6':'var(--text)'};background:${isT?'var(--accent)':''};border-radius:50%;width:22px;height:22px;line-height:22px;margin:auto">${d}</div>`;
     }
     return`<div style="background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius);padding:12px;min-width:200px">
-      <div style="font-size:12px;font-weight:600;color:var(--text);text-align:center;margin-bottom:8px">${y}년 ${m}월</div>
-      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px">
-        ${dayKR2.map((d,i)=>`<div style="text-align:center;font-size:10px;font-weight:500;color:${i===0?'#EF4444':i===6?'#3B82F6':'var(--text-2)'}">${d}</div>`).join('')}
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">${cells}</div>
+      <div style="font-size:12px;font-weight:600;text-align:center;margin-bottom:8px">${y}년 ${m}월</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px">${dk2.map((d,i)=>`<div style="text-align:center;font-size:10px;font-weight:500;color:${i===0?'#EF4444':i===6?'#3B82F6':'var(--text-2)'}">${d}</div>`).join('')}</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">${cls}</div>
     </div>`;
   }).join('');
 
@@ -1352,34 +1349,22 @@ function rGanttInto(el){
         <button class="gantt-range-btn" style="background:var(--accent);color:#fff;border-color:var(--accent)" onclick="openAddProjModal()">+ 프로젝트 추가</button>
       </div>
     </div>
-    <div class="gantt-wrap" style="flex:1;overflow:hidden">
-      <div class="gsi-label-panel">
-        <div class="gsi-label-header">
-          <div class="gsi-col-member">담당자</div>
-          <div class="gsi-col-proj">작품명</div>
-          <div class="gsi-col-status">진행여부</div>
-        </div>
-        <div class="gsi-label-body">${labelRows}</div>
-      </div>
-      <div class="gantt-chart" id="gantt-chart-annual">
-        <div class="gantt-header">${headerCols}</div>
-        <div class="gantt-rows">${chartRows}</div>
-      </div>
+    <div style="flex:1;overflow:auto">
+      <table style="border-collapse:collapse;width:max-content">
+        <thead><tr>
+          <th style="width:90px;min-width:90px;height:48px;padding:0 8px;border-right:1px solid var(--border-light);border-bottom:2px solid var(--border-light);background:var(--bg-hover);text-align:left;font-size:11px;font-weight:600;color:var(--text-2);position:sticky;left:0;z-index:5">담당자</th>
+          <th style="min-width:140px;height:48px;padding:0 8px;border-right:1px solid var(--border-light);border-bottom:2px solid var(--border-light);background:var(--bg-hover);text-align:left;font-size:11px;font-weight:600;color:var(--text-2);position:sticky;left:90px;z-index:5">작품명</th>
+          <th style="width:72px;min-width:72px;height:48px;padding:0 6px;border-right:2px solid var(--border-light);border-bottom:2px solid var(--border-light);background:var(--bg-hover);text-align:center;font-size:11px;font-weight:600;color:var(--text-2);position:sticky;left:230px;z-index:5">진행여부</th>
+          ${thCols}
+        </tr></thead>
+        <tbody>${bodyRows}</tbody>
+      </table>
     </div>
-    <div style="display:flex;gap:12px;padding:16px;overflow-x:auto;border-top:1px solid var(--border-light);flex-wrap:wrap">
-      ${miniCalHTML}
-    </div>`;
+    <div style="display:flex;gap:12px;padding:16px;overflow-x:auto;border-top:1px solid var(--border-light);flex-wrap:wrap">${miniCalHTML}</div>`;
 
   setTimeout(()=>{
-    const sc=document.getElementById('gantt-chart-annual');
-    if(sc&&ganttOffset===0){const ti=days.indexOf(td);if(ti>0)sc.scrollLeft=Math.max(0,(ti-3)*COL_W);}
-    // Sync scroll between label and chart
-    const lb=el.querySelector('.gsi-label-body');
-    const rows=el.querySelector('.gantt-rows');
-    if(lb&&rows){
-      lb.addEventListener('scroll',()=>rows.scrollTop=lb.scrollTop);
-      rows.addEventListener('scroll',()=>lb.scrollTop=rows.scrollTop);
-    }
+    const wrap=el.querySelector('div[style*="overflow:auto"]');
+    if(wrap&&ganttOffset===0){const ti=days.indexOf(td);if(ti>3)wrap.scrollLeft=(ti-3)*COL_W;}
   },50);
 }
 
