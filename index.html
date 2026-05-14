@@ -648,7 +648,7 @@ async function sharedLoadEvents(){const r=await sbGet('twt_v6_events');return r|
 async function sharedLoadPhotos(){const r=await sbGet('twt_v6_photos');return r||{}}
 function lsSave(){
   clearTimeout(_saveTimer);
-  _saveTimer=setTimeout(()=>sbSet('twt_v6_main',{members:S.members,works:S.works,projects:S.projects}),300);
+  _saveTimer=setTimeout(()=>sbSet('twt_v6_main',{members:S.members,works:S.works,projects:S.projects,memos:S.memos||{}}),300);
 }
 function lsSavePhotos(){
   clearTimeout(_saveTimer);
@@ -2347,6 +2347,7 @@ function delCat(cid){
       S.members=mainData.members||S.members;
       S.works=mainData.works||{};
       S.projects=(mainData.projects||S.projects).map(p=>({...p,color:rgbToHex(p.color)}));
+      if(mainData.memos)S.memos=mainData.memos;
     }
     if(catsData) S.categories=catsData;
     if(eventsData&&eventsData.length) S.events=eventsData;
