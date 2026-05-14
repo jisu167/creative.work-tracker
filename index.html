@@ -1924,8 +1924,8 @@ function saveDayMemo(mid,ds){
   if(val.trim())S.memos[key]=val;
   else delete S.memos[key];
   lsSave();
-  const btn=document.querySelector('.pop-memo-save');
-  if(btn){btn.textContent='저장됨 ✓';btn.style.background='#16A34A';setTimeout(()=>{btn.textContent='저장';btn.style.background='';},1200);}
+  closePop();
+  rTeam();
 }
 function _popOutside(e){if(!document.getElementById('day-pop')?.contains(e.target))closePop()}
 function closePop(){const p=document.getElementById('day-pop');if(p)p.remove();document.removeEventListener('click',_popOutside)}
