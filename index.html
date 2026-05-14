@@ -436,6 +436,15 @@ body{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);backgroun
 .gsi-label-header .gsi-col-member{font-size:11px;font-weight:600;color:var(--text-2)}
 .gsi-label-header .gsi-col-proj{font-size:11px;font-weight:600;color:var(--text-2)}
 .gsi-label-header .gsi-col-status{font-size:11px;font-weight:600;color:var(--text-2);text-align:center}
+
+/* ── DAY POP MEMO ── */
+.pop-tabs{display:flex;border-bottom:1px solid var(--border-light);padding:0 12px}
+.pop-tab{padding:6px 10px;font-size:11px;font-weight:500;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .12s}
+.pop-tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.pop-memo-area{padding:8px 12px}
+.pop-memo-input{width:100%;min-height:80px;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:8px;font-size:12px;color:var(--text);background:var(--bg-hover);font-family:'DM Sans',sans-serif;resize:vertical;outline:none;line-height:1.5;box-sizing:border-box}
+.pop-memo-input:focus{border-color:var(--accent);background:var(--bg)}
+.pop-memo-save{margin-top:6px;width:100%;padding:6px;font-size:12px;font-weight:500;border:none;border-radius:var(--radius-sm);background:var(--accent);color:#fff;cursor:pointer}
 /* ── PROJECT DETAIL PAGE ── */
 .proj-detail-overlay{position:fixed;inset:0;z-index:200;display:flex;justify-content:flex-end;background:rgba(0,0,0,.3);animation:fadeIn .15s}
 .proj-detail-panel{width:min(780px,95vw);height:100vh;background:var(--bg);overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,.12);display:flex;flex-direction:column;animation:slideInRight .2s}
@@ -917,8 +926,11 @@ function rTeam(){
           <span class="tv-card-text">${w.text}</span>
         </div>`;
       });
-      const addHint=!cards?`<div class="tv-add-hint">+ 추가</div>`:'';
-      return`<td class="team-cell${isToday?' is-today':''}" onclick="openDayPop('${m.id}','${ds}',event)">${cards}${addHint}</td>`;
+      const memoKey=`memo::${m.id}::${ds}`;
+      const hasMemo=S.memos&&S.memos[memoKey];
+      const memoHint=hasMemo?`<div class="tv-work-card" style="background:var(--bg-hover);color:var(--text-2);font-style:italic;font-size:10px;border-left:2px solid var(--border)">✏️ ${S.memos[memoKey].slice(0,20)}${S.memos[memoKey].length>20?'…':''}</div>`:'';
+      const addHint=!cards&&!hasMemo?`<div class="tv-add-hint">+ 추가</div>`:'';
+      return`<td class="team-cell${isToday?' is-today':''}" onclick="openDayPop('${m.id}','${ds}',event)">${cards}${memoHint}${addHint}</td>`;
     }).join('');
     return`<tr>
       <td class="day-label-td${isToday?' is-today':''}" style="${getHoliday(ds)?'background:#FFF5F5':''}">
@@ -1347,6 +1359,7 @@ function rGanttInto(el){
         <button class="gantt-range-btn${ganttRange===30?' on':''}" onclick="ganttRange=30;rAnnual()">1개월</button>
         <button class="gantt-range-btn${ganttRange===90?' on':''}" onclick="ganttRange=90;rAnnual()">3개월</button>
         <button class="gantt-range-btn${ganttRange===150?' on':''}" onclick="ganttRange=150;rAnnual()">5개월</button>
+        <button class="gantt-range-btn${ganttRange===365?' on':''}" onclick="ganttRange=365;rAnnual()">12개월</button>
         <button class="gantt-range-btn" style="background:var(--accent);color:#fff;border-color:var(--accent)" onclick="openAddProjModal()">+ 프로젝트 추가</button>
       </div>
     </div>
@@ -1620,14 +1633,15 @@ function rMonthly(el,toggleHTML){
     }).join('');
 
     // Work items as dots with text
-    const workItems=ws.slice(0,3).map(w=>{
+    const allWs=filterIds?filterIds.flatMap(mid=>gw(ds,mid)):gaw(ds);
+    const workItems=allWs.slice(0,3).map(w=>{
       const cat=gc(w.catId);
       return`<div class="gcal-work-item" onclick="event.stopPropagation();openDayPop('${w.memberId||''}','${ds}',event)">
         <div class="gcal-work-dot" style="background:${cat.hx}"></div>
         <span>${w.text||''}</span>
       </div>`;
     }).join('');
-    const moreCount=Math.max(0,ws.length-3);
+    const moreCount=Math.max(0,allWs.length-3);
 
     const dateStyle=isTod?'background:var(--accent);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;'
       :holi||dow===0?'color:#EF4444'
@@ -1852,6 +1866,9 @@ function openDayPop(mid,ds,evt){
       </div>`;}).join('')
     : `<div class="pop-empty">등록된 업무 없음</div>`;
 
+  const memoKey=`memo::${mid}::${ds}`;
+  const memoVal=S.memos&&S.memos[memoKey]||'';
+
   const pop=document.createElement('div');
   pop.id='day-pop';
   pop.innerHTML=`
@@ -1861,11 +1878,23 @@ function openDayPop(mid,ds,evt){
       <button class="pop-close" onclick="closePop()">✕</button>
     </div>
     ${projBadges?`<div style="padding:6px 12px 4px;display:flex;gap:4px;flex-wrap:wrap">${projBadges}</div>`:''}
-    <div class="pop-items" id="pop-items">${items}</div>
-    <div class="pop-add">
-      <select id="pop-cat" class="pop-sel">${cOpts}</select>
-      <input id="pop-inp" class="pop-inp" placeholder="업무 입력..." onkeydown="if(event.key==='Enter')addPopW('${ds}','${mid}')">
-      <button class="pop-btn" onclick="addPopW('${ds}','${mid}')">+</button>
+    <div class="pop-tabs">
+      <div class="pop-tab on" id="ptab-work" onclick="switchPopTab('work')">업무</div>
+      <div class="pop-tab" id="ptab-memo" onclick="switchPopTab('memo')">메모</div>
+    </div>
+    <div id="pop-panel-work">
+      <div class="pop-items" id="pop-items">${items}</div>
+      <div class="pop-add">
+        <select id="pop-cat" class="pop-sel">${cOpts}</select>
+        <input id="pop-inp" class="pop-inp" placeholder="업무 입력..." onkeydown="if(event.key==='Enter')addPopW('${ds}','${mid}')">
+        <button class="pop-btn" onclick="addPopW('${ds}','${mid}')">+</button>
+      </div>
+    </div>
+    <div id="pop-panel-memo" style="display:none">
+      <div class="pop-memo-area">
+        <textarea class="pop-memo-input" id="pop-memo-inp" placeholder="자유롭게 메모를 입력하세요...">${memoVal}</textarea>
+        <button class="pop-memo-save" onclick="saveDayMemo('${mid}','${ds}')">저장</button>
+      </div>
     </div>`;
 
   // position near click, keep in viewport
@@ -1880,6 +1909,23 @@ function openDayPop(mid,ds,evt){
 
   // close on outside click
   setTimeout(()=>document.addEventListener('click',_popOutside,{once:true}),10);
+}
+function switchPopTab(tab){
+  document.getElementById('ptab-work')?.classList.toggle('on',tab==='work');
+  document.getElementById('ptab-memo')?.classList.toggle('on',tab==='memo');
+  document.getElementById('pop-panel-work').style.display=tab==='work'?'':'none';
+  document.getElementById('pop-panel-memo').style.display=tab==='memo'?'':'none';
+  if(tab==='memo')setTimeout(()=>document.getElementById('pop-memo-inp')?.focus(),30);
+}
+function saveDayMemo(mid,ds){
+  if(!S.memos)S.memos={};
+  const val=document.getElementById('pop-memo-inp')?.value||'';
+  const key=`memo::${mid}::${ds}`;
+  if(val.trim())S.memos[key]=val;
+  else delete S.memos[key];
+  lsSave();
+  const btn=document.querySelector('.pop-memo-save');
+  if(btn){btn.textContent='저장됨 ✓';btn.style.background='#16A34A';setTimeout(()=>{btn.textContent='저장';btn.style.background='';},1200);}
 }
 function _popOutside(e){if(!document.getElementById('day-pop')?.contains(e.target))closePop()}
 function closePop(){const p=document.getElementById('day-pop');if(p)p.remove();document.removeEventListener('click',_popOutside)}
