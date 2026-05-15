@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+
 :root{
   --c1:#378ADD;--c1bg:#E6F1FB;--c1t:#0C447C;
   --c2:#1D9E75;--c2bg:#E1F5EE;--c2t:#085041;
@@ -1938,6 +1939,7 @@ function saveDayMemo(mid,ds){
   closePop();
   rTeam();
 }
+
 function _popOutside(e){if(!document.getElementById('day-pop')?.contains(e.target))closePop()}
 function closePop(){const p=document.getElementById('day-pop');if(p)p.remove();document.removeEventListener('click',_popOutside)}
 function addPopW(ds,mid){
@@ -2426,7 +2428,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closePop()});
 
 /* ── AI SEARCH ENGINE ── */
 let aiHistory=[];
-let aiPanelOpen=true;
+let aiPanelOpen=false;
 
 function buildAiContext(){
   const td=today();
